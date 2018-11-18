@@ -35,7 +35,6 @@ class Scene {
 
     setTile(x: number, y: number, newTile: number): this {
         this.tiles[y][x] = newTile;
-        this.renderTile(x, y);
         return this;
     }
 
@@ -89,10 +88,6 @@ class Scene {
     useTilesheet(tilesheet: Tilesheet): this {
         this.tilesheet = tilesheet;
 
-        if (this.canvas) {
-            this.render();
-        }
-
         this.animationClocks.forEach((clock) => {
             window.clearInterval(clock);
         });
@@ -113,6 +108,10 @@ class Scene {
                         if (tileIndex === animation.tiles[animationIndex]) {
                             const newTile = animation.tiles[nextAnimationIndex]
                             this.setTile(columnIndex, rowIndex, newTile);
+
+                            if (this.canvas) {
+                                this.renderTile(columnIndex, rowIndex);
+                            }
                         }
                     });
                 });

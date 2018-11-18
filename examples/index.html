@@ -2,6 +2,24 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
+        <style>
+            /* Overwrite Bulm style*/
+            .number {
+                display: initial;
+                font-size: inherit;
+                background: initial;
+                margin: initial;
+                padding: initial;
+            }
+
+            .content li + li {
+                margin: 0;
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js"></script>
         <title>Tilesheets</title>
         <style>
             html, body {
@@ -12,7 +30,7 @@
                 image-rendering: -moz-crisp-edges;          /* Firefox                        */
                 image-rendering: -o-crisp-edges;            /* Opera                          */
                 image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-                image-rendering: pixelated; /* Chrome */
+                image-rendering: pixelated;                 /* Chrome */
                 image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
                 -ms-interpolation-mode: nearest-neighbor; 
             }
@@ -21,62 +39,241 @@
                 display: inline-block;
                 line-height: 0;
             }
+
+            figure {
+                margin: 2em;
+            }
+
+            #tilesheet_index_sample {
+                transform: scale(2);
+                margin: 100px auto;
+                border-collapse: collapse;
+                line-height: 0;
+            }
+
+            #tilesheet_index_sample td {
+                text-align: center;
+                vertical-align: top;
+                font-size: 0.65rem;
+                line-height: .95rem;
+            }
+
+            #bush_sample {
+                transform: scale(4);
+                margin: 65px auto 20px auto;
+            }
+
+            #scene_sample, #scene_sample_winter, #scene_sample_animation {
+                width: 20%;
+            }
         </style>
     </head>
     <body>
-        <h1>Tilesheets.js</h1>
-        <h3>A small library providing helpers to handle tile sheets.</h3>
+        <section class="hero is-primary">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">Tilesheets.js</h1>
+                    <h2 class="subtitle">A small library providing helpers to handle tile sheets.</h2>
+                </div>
+            </div>
+        </section>
 
-        <section>
-            <p>
+        <div class="content">
+            <nav class="breadcrumb" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li><a href="#tilesheet">Tilesheet</a></li>
+                    <li><a href="#scene">Scene</a></li>
+                </ul>
+            </nav>
+        </div>
+    
+        <section class="section">
+            <p class="container">
                 <em>Tilesheets.js</em> helps you handling tile sheets with JavaScript.<br />
                 A tile sheet is a big image containing multiple smaller ones. In next demos, we'll use these tile sheets:
             </p>
-            <figure>
+            <figure class="has-text-centered">
                 <img src="./images/spring.png" alt="Spring" />
                 <img src="./images/summer.png" alt="Summer" />
                 <img src="./images/fall.png" alt="Fall" />
                 <img src="./images/winter.png" alt="Winter" />
-                <figcaption>
+                <figcaption class="is-size-7">
                     Tiles extracted from
                     <a href="https://www.spriters-resource.com/game_boy_gbc/thelegendofzeldaoracleofseasons/">
                         The Spriters Resource
                     </a>
                     and
-                    <a href="http://www.vgmaps.com/Atlas/GB-GBC/#L">
-                        VGMaps
+                    <a href="http://www.vgmaps.com/Atlas/GB-GBC/#L">VGMaps</a>, from
+                    <a href="https://www.zelda.com/oracle/">
+                        The Legend of Zelda: Oracle of Seasons
                     </a>
                 </figcaption>
             </figure>
         </section>
 
-        <section>
-            <h2>Basic usage</h2>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos quibusdam facilis aliquid esse blanditiis, eum
-                mollitia error minus ipsa dolorem perferendis aspernatur ut eveniet ad aliquam earum nihil qui! Sed!
-            </p>
+        <section class="section is-paddingless">
+            <div class="container">
+                <h2 id="tilesheet" class="title">Tilesheet</h2>
+                <p>
+                    <code>Tilesheet</code> class is the main concept of <em>Tilesheet.js</em>. It needs a path to the image and sizes
+                    information:
+                </p>
+                <pre><code class="language-js">import { Tilesheet } from 'tilesheets';
+
+const sheetSpring = new Tilesheet('./images/spring.png');
+sheetSpring
+    .setTileSize(16) // Tiles on the sheet are 16px*16px
+    .setMargin(1);   // There is a 1px gap between each tile</code></pre>
+                <p>
+                    A tilesheet must wait for its image to be loaded. To do that, simply wait for
+                    promise <code>waitForLoading</code>:
+                </p>
+                <pre><code class="language-js">await sheetSpring.waitForLoading();
+// It's safe to use the sheet now!</code></pre>
+                <p>
+                    When loaded, the sheet can be used! Three methods are provided according to your needs:
+                </p>
+
+                <div class="content">
+                    <ol>
+                        <li>
+                            <code>getTileRect</code>: return rectangle representation of the given title;
+                        </li>
+                        <li>
+                            <code>getTileStyle</code>: use above method to return CSS style to perform on a DOM element to
+                            display given tile;
+                        </li>
+                        <li>
+                            <code>getTileDomElement</code>: use above methods to return a <code>span</code> element displaying
+                            given tile.
+                        </li>
+                    </ol>
+                </div>
+                <p>
+                    These methods just need the index of the tile to get. Index start from 0, from the top left tile:
+                </p>
+                <table id="tilesheet_index_sample"></table>
+                <p>
+                    For example, if we want to render a bush:
+                </p>
+                <pre><code class="language-js">await sheetSpring.waitForLoading();
+const bushTile = sheetSpring.getTileDomElement(5);
+document.body.appendChild(bushTile);</code></pre>
+                <figure class="has-text-centered">
+                    <div id="bush_sample"></div>
+                    <figcaption class="is-size-7">
+                        (<em>This has been resized with CSS.</em>)
+                    </figcaption>
+                </figure>
+                <p>
+                    Speaking about resizing: in order to keep the pixelated render of tiles, you can use the following CSS rules
+                    (thanks <a href="https://stackoverflow.com/questions/14068103/disable-antialising-when-scaling-images#answer-14068216">StackOverflow</a>!):
+                </p>
+                <pre><code class="language-css">body {
+    image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+    image-rendering: -moz-crisp-edges;          /* Firefox                        */
+    image-rendering: -o-crisp-edges;            /* Opera                          */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+    image-rendering: pixelated;                 /* Chrome                         */
+    image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+    -ms-interpolation-mode: nearest-neighbor; 
+}</code></pre>
+            </div>
         </section>
 
-        <section>
-            <h2>Scenes</h2>
-            <p>
-                A scene is composed of multiple arrays of tiles.
-                Each of these tiles is rendered into a <code>canvas</code> element, by using a specific <code>Tilesheet</code> object.
-            </p>
-            <p>
-                We can tell the scene to use specific tile sheets.
-            </p>
-        </section>
-       
-        <div id="container"></div>
+        <section class="section">
+            <div class="container">
+                    <h2 id="scene" class="title">Scenes</h2>
+                    <h3 class="subtitle">Basic usage</h3>
+                    <p>
+                        A scene is composed of multiple arrays of tiles.
+                        Each of these tiles is rendered into a <code>canvas</code> element, by using a specific <code>Tilesheet</code> object.
+                    </p>
+                    <pre><code class="language-js">import { Scene, Tilesheet } from 'tilesheets';
 
-        <canvas id="canvas"></canvas>
+const sheetSpring = new Tilesheet('./images/spring.png');
+sheetSpring.setTileSize(16).setMargin(1);
+
+const myCanvas = document.getElementById('my-canvas');
+
+// Be sure that the sheet is loaded
+springSheet.waitForLoading().then(() => {
+    // Define wich tiles to render, by their index
+    const myScene = new Scene([
+        [21, 22, 23, 24,  9],
+        [28, 29, 30, 31,  9],
+        [22,  5,  3,  6, 10],
+        [29,  5, 17, 17, 18],
+    ], myCanvas);
+
+    myScene
+        .useTilesheet(sheetSpring)  // Tell the scene to use the spring sheet
+        .render();                  // And render it!
+});</code></pre>
+                    <figure class="has-text-centered">
+                        <canvas id="scene_sample"></canvas>
+                        <figcaption class="is-size-7">
+                            (<em>This has been resized with CSS.</em>)
+                        </figcaption>
+                    </figure>
+                    <p>
+                        Of course, we can specify another tilesheet for the same scene, we just have to call <code>useTilesheet</code> with
+                        the <code>Tilesheet</code> object we want to use, for example the one from winter:
+                    </p>
+                    <figure class="has-text-centered">
+                        <canvas id="scene_sample_winter"></canvas>
+                        <figcaption class="is-size-7">
+                            (<em>This has been resized with CSS (you should know that, now).</em>)
+                        </figcaption>
+                    </figure>
+                    <h3 class="subtitle">Animations</h3>
+                    <p>
+                        An animation is the combination of an array of tile indexes and a speed, in milliseconds.<br />
+                        Animations can be defined via the <code>Tilesheet</code> class:
+                    </p>
+                    <pre><code class="language-js">const waterAnimation = {
+    tiles: [38, 39, 40, 41],
+    speed: 300,
+};
+
+const flowerAnimation = {
+    tiles: [1, 12, 19, 20],
+    speed: 300,
+};
+
+sheetSpring.setAnimations([waterAnimation, flowerAnimation]);</code></pre>
+                    <p>
+                        If a scene uses a tile defined in an animation, this tile will be automatically
+                        animated:
+                    </p>
+                    <pre><code class="language-js">const tiles = [
+    [ 1,  1,  1,  1,  1],
+    [17, 17, 17, 17, 17],
+    [36, 36, 36, 36, 36],
+    [38, 38, 38, 38, 38],
+];
+
+const animatedSceneCanvas = document.getElementById('my-canvas');
+const myAnimatedScene = new Scene(tiles, animatedSceneCanvas);
+
+myAnimatedScene
+    .useTilesheet(sheetSpring)
+    .render();</code></pre>
+                    <figure class="has-text-centered">
+                        <canvas id="scene_sample_animation"></canvas>
+                        <figcaption class="is-size-7">
+                            Yeah, animated flowers above animated water!
+                        </figcaption>
+                    </figure>
+            </div>
+        </section>
+
+        <canvas id="canvas_advanced"></canvas>
         <br />
-        <button data-season="spring">Spring</button>
-        <button data-season="summer">Summer</button>
-        <button data-season="fall">Fall</button>
-        <button data-season="winter">Winter</button>
+        <button class="button is-success is-outlined" data-season="spring">Spring</button>
+        <button class="button is-danger is-outlined" data-season="summer">Summer</button>
+        <button class="button is-warning is-outlined" data-season="fall">Fall</button>
+        <button class="button is-info is-outlined" data-season="winter">Winter</button>
         
         <script src="./index.ts"></script>
     </body>

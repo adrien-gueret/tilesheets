@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel serve ./examples/index.html --out-dir docs",
-    "build": "parcel build ./examples/index.html --no-cache --public-url http://localhost/tilesheets.js/docs/ --out-dir docs",
+    "build": "parcel build ./examples/index.html --no-cache --public-url https://adrien-gueret.github.io/tilesheets/ --out-dir docs",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll"
   },
