@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "downlevelIteration": true,
+        "target": "es5",
+        "lib": ["es6", "dom"],
+        "removeComments": true
+    },
+    "files": ["index.ts"],
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/__tests__/*", "**/__mocks__/*"]
+}

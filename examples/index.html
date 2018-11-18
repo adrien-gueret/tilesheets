@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Tilesheets</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+
+                image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+                image-rendering: -moz-crisp-edges;          /* Firefox                        */
+                image-rendering: -o-crisp-edges;            /* Opera                          */
+                image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+                image-rendering: pixelated; /* Chrome */
+                image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+                -ms-interpolation-mode: nearest-neighbor; 
+            }
+
+            .tree {
+                display: inline-block;
+                line-height: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Tilesheets.js</h1>
+        <h3>A small library providing helpers to handle tile sheets.</h3>
+
+        <section>
+            <p>
+                <em>Tilesheets.js</em> helps you handling tile sheets with JavaScript.<br />
+                A tile sheet is a big image containing multiple smaller ones. In next demos, we'll use these tile sheets:
+            </p>
+            <figure>
+                <img src="./images/spring.png" alt="Spring" />
+                <img src="./images/summer.png" alt="Summer" />
+                <img src="./images/fall.png" alt="Fall" />
+                <img src="./images/winter.png" alt="Winter" />
+                <figcaption>
+                    Tiles extracted from
+                    <a href="https://www.spriters-resource.com/game_boy_gbc/thelegendofzeldaoracleofseasons/">
+                        The Spriters Resource
+                    </a>
+                    and
+                    <a href="http://www.vgmaps.com/Atlas/GB-GBC/#L">
+                        VGMaps
+                    </a>
+                </figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h2>Basic usage</h2>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos quibusdam facilis aliquid esse blanditiis, eum
+                mollitia error minus ipsa dolorem perferendis aspernatur ut eveniet ad aliquam earum nihil qui! Sed!
+            </p>
+        </section>
+
+        <section>
+            <h2>Scenes</h2>
+            <p>
+                A scene is composed of multiple arrays of tiles.
+                Each of these tiles is rendered into a <code>canvas</code> element, by using a specific <code>Tilesheet</code> object.
+            </p>
+            <p>
+                We can tell the scene to use specific tile sheets.
+            </p>
+        </section>
+       
+        <div id="container"></div>
+
+        <canvas id="canvas"></canvas>
+        <br />
+        <button data-season="spring">Spring</button>
+        <button data-season="summer">Summer</button>
+        <button data-season="fall">Fall</button>
+        <button data-season="winter">Winter</button>
+        
+        <script src="./index.ts"></script>
+    </body>
+</html>
