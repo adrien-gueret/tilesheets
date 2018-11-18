@@ -25,6 +25,7 @@ export default (sheetSpring, sheetSummer, sheetFall, sheetWinter) => {
 
         activeButton = document.querySelector(`[data-season="${season}"]`);
         activeButton.disabled = true;
+        activeButton.classList.add('is-outlined');
 
         scene
             .resetTiles()
@@ -40,6 +41,7 @@ export default (sheetSpring, sheetSummer, sheetFall, sheetWinter) => {
         }
 
         activeButton.disabled = false;
+        activeButton.classList.remove('is-outlined');
 
         switchSeason(target.dataset.season);
        

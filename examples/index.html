@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="has-navbar-fixed-bottom">
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -23,9 +23,6 @@
         <title>Tilesheets</title>
         <style>
             html, body {
-                margin: 0;
-                padding: 0;
-
                 image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
                 image-rendering: -moz-crisp-edges;          /* Firefox                        */
                 image-rendering: -o-crisp-edges;            /* Opera                          */
@@ -33,11 +30,6 @@
                 image-rendering: pixelated;                 /* Chrome */
                 image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
                 -ms-interpolation-mode: nearest-neighbor; 
-            }
-
-            .tree {
-                display: inline-block;
-                line-height: 0;
             }
 
             figure {
@@ -65,10 +57,28 @@
 
             #scene_sample, #scene_sample_winter, #scene_sample_animation {
                 width: 20%;
+                min-width: 180px;
+            }
+
+            #canvas_advanced {
+                width: 100%;
+            }
+
+            #navbar {
+                background-image: linear-gradient(to right, rgba(255, 255, 255, .1), rgba(254, 254, 254, .9));
+                background-color: transparent;
             }
         </style>
     </head>
     <body>
+        <nav id="navbar" class="navbar is-fixed-bottom">
+            <div class="navbar-end">
+                <a class="navbar-item" href="https://github.com/adrien-gueret/tilesheets">
+                    <svg height="32" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="32" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+                </a>
+            </div>
+        </nav>
+
         <section class="hero is-primary">
             <div class="hero-body">
                 <div class="container">
@@ -111,7 +121,7 @@
             </figure>
         </section>
 
-        <section class="section is-paddingless">
+        <section class="section">
             <div class="container">
                 <h2 id="tilesheet" class="title">Tilesheet</h2>
                 <p>
@@ -265,16 +275,53 @@ myAnimatedScene
                             Yeah, animated flowers above animated water!
                         </figcaption>
                     </figure>
-            </div>
-        </section>
+                    <h3 class="subtitle">Advanced usage</h3>
+                    <p>
+                        By combining methods <code>resetTiles()</code>, <code>useTilesheet()</code> and <code>render()</code>,
+                        we can create dynamic scenes by switching the tilesheet to use on the fly:
+                    </p>
+                    <pre><code class="language-js">const tiles = [
+    [28, 29, 28, 29, 21, 22, 28, 29, 21, 22, 21, 22, 28, 29,  0,  0, 11, 42, 47, 47],
+    [ 8, 25, 26, 27, 28, 29,  5,  5, 28, 29, 28, 29,  5,  5,  5,  6,  5, 42, 47, 47],
+    [ 4, 32, 33, 34, 21, 22,  8,  8,  2,  3,  4, 21, 22, 17, 13,  5,  5, 42, 47, 47],
+    [17, 14, 14, 14, 28, 29,  8,  8,  9, 10,  7, 28, 29, 36, 36, 36, 36, 51, 47, 47],
+    [21, 22, 23, 24, 13, 13,  3,  3, 10, 10,  0, 11, 42, 38, 38, 38, 47, 47, 47, 47],
+    [28, 29, 30, 31, 13, 21, 22,  6,  1, 10,  0, 11, 42, 38, 38, 38, 47, 47, 47, 47],
+    [22,  2,  3,  3,  7, 28, 29,  6,  1,  7,  7, 18, 42, 45, 46, 45, 35, 50, 50, 50],
+    [29, 16,  7,  7,  0,  1,  1, 21, 22, 21, 22,  8, 42, 45, 45, 46, 44,  8,  8,  8],
+    [21, 22,  9,  0,  0,  0,  7, 28, 29, 28, 29, 21, 22, 50, 50, 50,  8,  2,  3,  3],
+];
 
-        <canvas id="canvas_advanced"></canvas>
-        <br />
-        <button class="button is-success is-outlined" data-season="spring">Spring</button>
-        <button class="button is-danger is-outlined" data-season="summer">Summer</button>
-        <button class="button is-warning is-outlined" data-season="fall">Fall</button>
-        <button class="button is-info is-outlined" data-season="winter">Winter</button>
-        
+function switchSeason(season) {
+    const seasonToTilesheet = {
+        spring: sheetSpring,
+        summer: sheetSummer,
+        fall: sheetFall,
+        winter: sheetWinter,
+    };
+
+    scene
+        .resetTiles()   // Reset back scene tiles to the initial ones (useful for animated tiles)
+        .useTilesheet(seasonToTilesheet[season]) // Use new tilesheet
+        .render();                               // Re-render!
+}
+
+//    ...
+//    Rest of the code where we attach `switchSeason` on buttons click handlers.
+//    Check GitHub repository for full code!
+//    ...</code></pre>
+                    <figure class="has-text-centered">
+                        <canvas id="canvas_advanced"></canvas>
+                        <figcaption>
+                            <b>Select season:</b><br />
+                            <button class="button is-success" data-season="spring">Spring</button>
+                            <button class="button is-danger" data-season="summer">Summer</button>
+                            <button class="button is-warning" data-season="fall">Fall</button>
+                            <button class="button is-info" data-season="winter">Winter</button>
+                        </figcaption>
+                    </figure>
+            </div>
+        </section>        
         <script src="./index.ts"></script>
     </body>
 </html>
