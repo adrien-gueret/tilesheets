@@ -13,6 +13,15 @@ describe('Tilesheet', () => {
         })
     });
 
+    describe('getAnimations/setAnimations', () => {
+        it('should get/set sheet animations', () => {
+            const animations = [{ tiles: [1, 2], speed: 200}];
+            sheet.setAnimations(animations);
+
+            expect(sheet.getAnimations()).toBe(animations);
+        });
+    });
+
     describe('setTileSize', () => {
         it('should set tiles width and height', () => {
             sheet.setTileSize(32, 24);
