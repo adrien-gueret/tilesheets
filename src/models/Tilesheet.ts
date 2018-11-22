@@ -17,6 +17,10 @@ class Tilesheet {
         return this.animations;
     }
 
+    getAnimation(name: string): Animation {
+        return this.animations.filter(animation => animation.name === name)[0];
+    }
+
     setAnimations(animations: Array<Animation>): this {
         this.animations = animations;
         return this;

@@ -50,7 +50,8 @@
                 line-height: .95rem;
             }
 
-            #bush_sample {
+            #bush_sample, #canvas_bush_sample, #canvas_bush_sample2, #canvas_sprite_animated,
+            #canvas_sprite_animated_advanced {
                 transform: scale(4);
                 margin: 65px auto 20px auto;
             }
@@ -92,6 +93,7 @@
             <nav class="breadcrumb" role="navigation" aria-label="main navigation">
                 <ul>
                     <li><a href="#tilesheet">Tilesheet</a></li>
+                    <li><a href="#sprite">Sprite</a></li>
                     <li><a href="#scene">Scene</a></li>
                 </ul>
             </nav>
@@ -124,6 +126,7 @@
         <section class="section">
             <div class="container">
                 <h2 id="tilesheet" class="title">Tilesheet</h2>
+                <h3 class="subtitle">Basic usage</h3>
                 <p>
                     <code>Tilesheet</code> class is the main concept of <em>Tilesheet.js</em>. It needs a path to the image and sizes
                     information:
@@ -189,12 +192,122 @@ document.body.appendChild(bushTile);</code></pre>
     image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
     -ms-interpolation-mode: nearest-neighbor; 
 }</code></pre>
+                <h3 class="subtitle">Animation</h3>
+                <p>
+                    An animation is the combination of an array of tile indexes and a speed, in milliseconds. An optional name can be provided:
+                </p>
+                <pre><code class="language-js">const waterAnimation = {
+    tiles: [38, 39, 40, 41],
+    speed: 300,
+    name: 'water',
+};
+
+const flowerAnimation = {
+    tiles: [1, 12, 19, 20],
+    speed: 300,
+    name: 'flower',
+};
+
+sheetSpring.setAnimations([waterAnimation, flowerAnimation]);</code></pre>
+            <p>Animations can be used only within a <code>canvas</code> element, via the classes <code>Sprite</code> and <code>Scene</code>.</p>
             </div>
         </section>
 
         <section class="section">
             <div class="container">
-                    <h2 id="scene" class="title">Scenes</h2>
+                <h2 id="sprite" class="title">Sprite</h2>
+                <h3 class="subtitle">Basic usage</h3>
+                <p>
+                    A sprite is an object manipulating tiles, displaying theme one by one in a <code>canvas</code> element.
+                </p>
+                <pre><code class="language-js">import { Sprite, Tilesheet } from 'tilesheets';
+
+const sheetSpring = new Tilesheet('./images/spring.png');
+sheetSpring.setTileSize(16).setMargin(1);
+
+const myCanvas = document.getElementById('my-canvas');
+
+// Be sure that the sheet is loaded
+springSheet.waitForLoading().then(() => {
+    // Create a new sprite from a canvas
+    const mySprite = new Sprite(myCanvas);
+
+    mySprite
+        .useTilesheet(sheetSpring)  // Tell the sprite to use the spring sheet
+        .setCurrentTile(5)          // Set current to 5 (the bush one)
+        .render();                  // And render it!
+});</code></pre>
+                <figure class="has-text-centered">
+                    <canvas id="canvas_bush_sample"></canvas>
+                    <figcaption class="is-size-7">
+                        (<em>This has been resized with CSS.</em>)<br />
+                        The same bush than before, but this time in a canvas!
+                    </figcaption>
+                </figure>
+                <p>
+                    Of course, we can specify another tilesheet for the same sprite, we just have to call <code>useTilesheet</code> with
+                    the <code>Tilesheet</code> object we want to use, for example the one from fall:
+                </p>
+                <figure class="has-text-centered">
+                    <canvas id="canvas_bush_sample2"></canvas>
+                    <figcaption class="is-size-7">
+                        (<em>This has been resized with CSS.</em>)<br />
+                        Using another tilesheet is a simple and quick way to switch graphics.
+                    </figcaption>
+                </figure>
+                <h3 class="subtitle">Animation</h3>
+                <p>
+                    Interesting thing about sprites is that they can use their tilesheet animations, by their name:
+                </p>
+                <pre><code class="language-js">mySprite
+    .playAnimation('flower')
+    .render();</code></pre>
+                 <figure class="has-text-centered">
+                    <canvas id="canvas_sprite_animated"></canvas>
+                    <figcaption class="is-size-7">
+                        (<em>This has been resized with CSS. You should know that now, I won't repeat anymore!</em>)<br />
+                        Yeah, dancing flowers!
+                    </figcaption>
+                </figure>
+                <p>
+                    It's of course possible to switch animation of the sprite on the fly, or simply stop it:
+                </p>
+                <pre><code class="language-js">function switchAnimation(newAnimation) {
+    const possibleAnimations = ['water', 'flower'];
+
+    if (possibleAnimations.indexOf(newAnimation) >= 0) {
+        mySprite.playAnimation(newAnimation).render();
+    } else {
+        mySprite.stopAnimation();
+    }
+}
+
+//    ...
+//    Rest of the code where we attach `switchAnimation` on buttons click handlers.
+//    Check GitHub repository for full code!
+//    ...</code></pre>
+                <figure class="has-text-centered">
+                    <canvas id="canvas_sprite_animated_advanced"></canvas>
+                    <figcaption class="is-size-7">
+                            <b>Select animation:</b><br />
+                            <button class="button is-success" data-animation="flower">Flower</button>
+                            <button class="button is-info" data-animation="water">Water</button>
+                            <button class="button is-dark" data-animation="none">None</button>
+                    </figcaption>
+                </figure>
+                <p>
+                    Even if the examples show some flowers and water, sprites are great to animate objects like
+                    characters, vehicles or monsters.
+                </p>
+                <p>
+                    If we want to display and animate decors, it would be better to use a scene...
+                </p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                    <h2 id="scene" class="title">Scene</h2>
                     <h3 class="subtitle">Basic usage</h3>
                     <p>
                         A scene is composed of multiple arrays of tiles.
@@ -224,35 +337,23 @@ springSheet.waitForLoading().then(() => {
                     <figure class="has-text-centered">
                         <canvas id="scene_sample"></canvas>
                         <figcaption class="is-size-7">
-                            (<em>This has been resized with CSS.</em>)
+                            A nice forest during the spring...
                         </figcaption>
                     </figure>
                     <p>
-                        Of course, we can specify another tilesheet for the same scene, we just have to call <code>useTilesheet</code> with
-                        the <code>Tilesheet</code> object we want to use, for example the one from winter:
+                        Like sprites, we can define another tilesheet for the same scene, again thanks to the method <code>useTilesheet</code>.
+                        What if winter is coming?
                     </p>
                     <figure class="has-text-centered">
                         <canvas id="scene_sample_winter"></canvas>
                         <figcaption class="is-size-7">
-                            (<em>This has been resized with CSS (you should know that, now).</em>)
+                           It's suddenly coldly!
                         </figcaption>
                     </figure>
                     <h3 class="subtitle">Animations</h3>
                     <p>
-                        An animation is the combination of an array of tile indexes and a speed, in milliseconds.<br />
-                        Animations can be defined via the <code>Tilesheet</code> class:
+                        When using sprites, we have to manually tell which animation to play, via its name. It's way simpler with scenes!
                     </p>
-                    <pre><code class="language-js">const waterAnimation = {
-    tiles: [38, 39, 40, 41],
-    speed: 300,
-};
-
-const flowerAnimation = {
-    tiles: [1, 12, 19, 20],
-    speed: 300,
-};
-
-sheetSpring.setAnimations([waterAnimation, flowerAnimation]);</code></pre>
                     <p>
                         If a scene uses a tile defined in an animation, this tile will be automatically
                         animated:

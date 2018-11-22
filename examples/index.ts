@@ -4,6 +4,7 @@ import tilesheetBushSample from './scripts/tilesheet_bush';
 import tilesheetIndexSample from './scripts/tilesheet_index_sample';
 import tilesheetAdvanced from './scripts/tilesheet_advanced';
 import sceneSample from './scripts/scene_sample';
+import spriteAnimated from './scripts/sprite_animated';
 
 import imageSpring from './images/spring.png';
 import imageSummer from './images/summer.png';
@@ -20,6 +21,7 @@ import imageWinter from './images/winter.png';
     const waterAnimation = {
         tiles: [38, 39, 40, 41],
         speed: animationSpeed,
+        name: 'water',
     };
     const driedWater1Animation = {
         tiles: [45, 39],
@@ -36,6 +38,7 @@ import imageWinter from './images/winter.png';
     const flowersAnimation = {
         tiles: [1, 12, 19, 20],
         speed: animationSpeed,
+        name: 'flower',
     };
 
     sheetSpring.setAnimations([waterAnimation, driedWater1Animation, driedWater2Animation, frozenWaterAnimation, flowersAnimation]);
@@ -52,7 +55,8 @@ import imageWinter from './images/winter.png';
     await Promise.all(allSheets.map(sheet => sheet.waitForLoading()));
 
     tilesheetIndexSample(sheetSpring);
-    tilesheetBushSample(sheetSpring);
+    tilesheetBushSample(sheetSpring, sheetFall);
+    spriteAnimated(sheetSpring);
     sceneSample(sheetSpring, sheetWinter);
     tilesheetAdvanced(sheetSpring, sheetSummer, sheetFall, sheetWinter);    
 })();

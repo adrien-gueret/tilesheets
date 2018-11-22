@@ -33,7 +33,7 @@ export default (sheetSpring, sheetSummer, sheetFall, sheetWinter) => {
             .render();
     }
 
-    document.body.onclick = (e) => {
+    document.body.addEventListener('click', (e) => {
         const target = e.target as HTMLButtonElement;
 
         if (!target.dataset.season) {
@@ -46,7 +46,7 @@ export default (sheetSpring, sheetSummer, sheetFall, sheetWinter) => {
         switchSeason(target.dataset.season);
        
         e.preventDefault();
-    };
+    });
 
     switchSeason('spring');
 };
