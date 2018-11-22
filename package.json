@@ -34,6 +34,7 @@
   "jest": {
     "rootDir": "src",
     "coverageDirectory": "../coverage",
+    "collectCoverageFrom": ["**/*.{ts}"],
     "coverageThreshold": {
       "global": {
         "branches": 100,
@@ -49,7 +50,8 @@
     "moduleFileExtensions": ["ts", "js"],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "./tsconfig.test.json"
+        "diagnostics": false,
+        "tsConfig": "./tsconfig.test.json"
       }
     }
   }

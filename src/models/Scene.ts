@@ -85,41 +85,44 @@ class Scene {
         return this;
     }
 
+    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number): number {
+        let nextTileIndex = currentTileIndex + 1;
+
+        if (!tiles[nextTileIndex]) {
+            nextTileIndex = 0;
+        }
+        
+        this.tiles.forEach((rowTiles, rowIndex) => {
+            rowTiles.forEach((tileIndex, columnIndex) => {
+                if (tileIndex !== tiles[currentTileIndex]) {
+                    return;
+                }
+
+                const newTile = tiles[nextTileIndex]
+                this.setTile(columnIndex, rowIndex, newTile);
+
+                if (this.canvas) {
+                    this.renderTile(columnIndex, rowIndex);
+                }
+            });
+        });
+
+        return nextTileIndex;
+    }
+
     useTilesheet(tilesheet: Tilesheet): this {
         this.tilesheet = tilesheet;
 
         this.animationClocks.forEach((clock) => {
             window.clearInterval(clock);
         });
-        this.animationClocks = [];
 
-        this.tilesheet.getAnimations().forEach((animation) => {
-            let animationIndex = 0;
+        this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
+            let tileIndex = 0;
 
-            const clock = window.setInterval(() => {
-                let nextAnimationIndex = animationIndex + 1;
-
-                if (!animation.tiles[nextAnimationIndex]) {
-                    nextAnimationIndex = 0;
-                }
-                
-                this.tiles.forEach((rowTiles, rowIndex) => {
-                    rowTiles.forEach((tileIndex, columnIndex) => {
-                        if (tileIndex === animation.tiles[animationIndex]) {
-                            const newTile = animation.tiles[nextAnimationIndex]
-                            this.setTile(columnIndex, rowIndex, newTile);
-
-                            if (this.canvas) {
-                                this.renderTile(columnIndex, rowIndex);
-                            }
-                        }
-                    });
-                });
-                
-                animationIndex = nextAnimationIndex;
+            return window.setInterval(() => {
+                tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex);
             }, animation.speed);
-
-            this.animationClocks.push(clock);
         });
     
         return this;
