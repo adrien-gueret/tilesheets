@@ -15,10 +15,22 @@ describe('Tilesheet', () => {
 
     describe('getAnimations/setAnimations', () => {
         it('should get/set sheet animations', () => {
-            const animations = [{ tiles: [1, 2], speed: 200}];
+            const animations = [{ tiles: [1, 2], speed: 200 }];
             sheet.setAnimations(animations);
 
             expect(sheet.getAnimations()).toBe(animations);
+        });
+    });
+
+    describe('getAnimation', () => {
+        it('should get animation by its name', () => {
+            const animations = [
+                { tiles: [1, 2], speed: 200 },
+                { tiles: [3, 4], speed: 200, name: 'foo' },
+            ];
+            sheet.setAnimations(animations);
+
+            expect(sheet.getAnimation('foo')).toBe(animations[1]);
         });
     });
 
