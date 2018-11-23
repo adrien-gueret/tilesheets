@@ -3,6 +3,12 @@
 
 *Tilesheets.js* helps you handling tile sheets with JavaScript.  
 
+```shell
+npm i tilesheets
+# or
+yarn add tilesheets
+```
+
 ```js
 import { Sprite, Tilesheet } from 'tilesheets';
 
