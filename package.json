@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "parcel serve ./examples/index.html --out-dir docs",
     "build": "parcel build ./examples/index.html --no-cache --public-url https://adrien-gueret.github.io/tilesheets/ --out-dir docs",
+    "npm": "tsc",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll"
   },

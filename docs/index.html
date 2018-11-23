@@ -40,7 +40,7 @@ springSheet.waitForLoading().then(() => {
 
     mySprite
         .useTilesheet(sheetSpring)  // Tell the sprite to use the spring sheet
-        .setCurrentTile(5)          // Set current to 5 (the bush one)
+        .setCurrentTile(5)          // Set current tile to 5 (the bush one)
         .render();                  // And render it!
 });</code></pre> <figure class="has-text-centered"> <canvas id="canvas_bush_sample"></canvas> <figcaption class="is-size-7"> (<em>This has been resized with CSS.</em>)<br> The same bush than before, but this time in a canvas! </figcaption> </figure> <p> Of course, we can specify another tilesheet for the same sprite, we just have to call <code>useTilesheet</code> with the <code>Tilesheet</code> object we want to use, for example the one from fall: </p> <figure class="has-text-centered"> <canvas id="canvas_bush_sample2"></canvas> <figcaption class="is-size-7"> (<em>This has been resized with CSS.</em>)<br> Using another tilesheet is a simple and quick way to switch graphics. </figcaption> </figure> <h3 class="subtitle">Animation</h3> <p> Interesting thing about sprites is that they can use their tilesheet animations, by their name: </p> <pre><code class="language-js">mySprite
     .playAnimation('flower')
@@ -118,4 +118,4 @@ function switchSeason(season) {
 //    ...
 //    Rest of the code where we attach `switchSeason` on buttons click handlers.
 //    Check GitHub repository for full code!
-//    ...</code></pre> <figure class="has-text-centered"> <canvas id="canvas_advanced"></canvas> <figcaption> <b>Select season:</b><br> <button class="button is-success" data-season="spring">Spring</button> <button class="button is-danger" data-season="summer">Summer</button> <button class="button is-warning" data-season="fall">Fall</button> <button class="button is-info" data-season="winter">Winter</button> </figcaption> </figure> </div> </section> <script src="https://adrien-gueret.github.io/tilesheets/examples.53b07087.js"></script> </body> </html>
+//    ...</code></pre> <figure class="has-text-centered"> <canvas id="canvas_advanced"></canvas> <figcaption> <b>Select season:</b><br> <button class="button is-success" data-season="spring">Spring</button> <button class="button is-danger" data-season="summer">Summer</button> <button class="button is-warning" data-season="fall">Fall</button> <button class="button is-info" data-season="winter">Winter</button> </figcaption> </figure> </div> </section> <script src="https://adrien-gueret.github.io/tilesheets/examples.3dbb0da4.js"></script> </body> </html>
