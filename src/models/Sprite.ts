@@ -11,6 +11,11 @@ export default class Sprite {
         this.canvas = canvas;
     }
 
+    setCanvas(canvas: HTMLCanvasElement): this {
+        this.canvas = canvas;
+        return this;
+    }
+
     setCurrentTile(tileIndex: number): this {
         this.currentTileIndex = tileIndex;
         return this;
@@ -19,6 +24,23 @@ export default class Sprite {
     stopAnimation(): this {
         window.clearInterval(this.animationClock);
         return this;
+    }
+
+    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number, shouldLoop: boolean): number {
+        let nextTileIndex = currentTileIndex + 1;
+
+        if (!tiles[nextTileIndex]) {
+            nextTileIndex = 0;
+
+            if (!shouldLoop) {
+                this.stopAnimation();
+                return nextTileIndex;
+            }
+        }
+        
+        this.setCurrentTile(tiles[nextTileIndex]).render();
+
+        return nextTileIndex;
     }
 
     playAnimation(name: string, shouldLoop: boolean = true): this {
@@ -31,22 +53,10 @@ export default class Sprite {
         this.stopAnimation();
 
         let currentAnimationIndex = 0;
-        this.setCurrentTile(animation.tiles[currentAnimationIndex]);
+        this.setCurrentTile(animation.tiles[currentAnimationIndex]).render();
 
         this.animationClock = window.setInterval(() => {
-            currentAnimationIndex++;
-
-            if (!animation.tiles[currentAnimationIndex]) {
-                if (!shouldLoop) {
-                    this.stopAnimation();
-                    return;
-                }
-
-                currentAnimationIndex = 0;
-            }
-
-            this.setCurrentTile(animation.tiles[currentAnimationIndex]).render();
-
+            currentAnimationIndex = this.updateTilesFromArray(animation.tiles, currentAnimationIndex, shouldLoop);
         }, animation.speed);
 
         return this;
@@ -79,6 +89,7 @@ export default class Sprite {
 
     useTilesheet(tilesheet: Tilesheet): this {
         this.tilesheet = tilesheet;
+        this.stopAnimation();
         return this;
     }
 }
