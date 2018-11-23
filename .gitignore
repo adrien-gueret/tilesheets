@@ -4,4 +4,5 @@ node_modules
 yarn.error
 yarn-error.log
 .cache
-*.js
+src/**/*.js
+index.js
