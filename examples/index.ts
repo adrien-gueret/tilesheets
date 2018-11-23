@@ -1,5 +1,6 @@
 import { Tilesheet } from '../';
 
+import favicon from './scripts/favicon';
 import tilesheetBushSample from './scripts/tilesheet_bush';
 import tilesheetIndexSample from './scripts/tilesheet_index_sample';
 import tilesheetAdvanced from './scripts/tilesheet_advanced';
@@ -53,6 +54,7 @@ import imageWinter from './images/winter.png';
     
     await Promise.all(allSheets.map(sheet => sheet.waitForLoading()));
 
+    favicon(sheetSpring);
     tilesheetIndexSample(sheetSpring);
     tilesheetBushSample(sheetSpring, sheetFall);
     spriteAnimated(sheetSpring);
