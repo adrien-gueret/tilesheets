@@ -5,7 +5,6 @@ import tilesheetIndexSample from './scripts/tilesheet_index_sample';
 import tilesheetAdvanced from './scripts/tilesheet_advanced';
 import sceneSample from './scripts/scene_sample';
 import spriteAnimated from './scripts/sprite_animated';
-
 import imageSpring from './images/spring.png';
 import imageSummer from './images/summer.png';
 import imageFall from './images/fall.png';
