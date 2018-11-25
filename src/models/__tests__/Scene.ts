@@ -132,6 +132,10 @@ describe('Scene', () => {
     });
 
     describe('render', () => {
+        beforeEach(() => {
+            scene.renderTile = jest.fn();
+        });
+
         it('should throw error if scene does not have tilesheet', () => {
             scene.tilesheet = null;
             expect(() => scene.render()).toThrow();
@@ -143,11 +147,25 @@ describe('Scene', () => {
 
         it('should render each scene tile', () => {
             const canvas = {};
-            scene.renderTile = jest.fn();
             
             scene.render(canvas);
 
             expect(scene.renderTile).toHaveBeenCalledTimes(20);
+        });
+
+        it('should set scene canvas to the given one', () => {
+            const canvas = {};
+       
+            scene.render(canvas);
+
+            expect(scene.canvas).toBe(canvas);
+        });
+
+        it('should set scene canvas width and height', () => {
+            scene.render();
+
+            expect(scene.canvas.width).toBe(80);
+            expect(scene.canvas.height).toBe(40);
         });
     });
 

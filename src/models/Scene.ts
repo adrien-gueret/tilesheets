@@ -72,8 +72,12 @@ class Scene {
             throw new Error('Scene::render: no canvas provided.');
         }
 
-        canvas.width = this.getWidth();
-        canvas.height = this.getHeight();
+        if (canvas !== this.canvas) {
+            this.canvas = canvas;
+        } else {
+            canvas.width = this.getWidth();
+            canvas.height = this.getHeight();
+        }
 
         this.tiles.forEach((rowTiles, rowIndex) => {
             rowTiles.forEach((tileIndex, columnIndex) => {
