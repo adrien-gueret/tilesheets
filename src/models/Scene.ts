@@ -42,7 +42,13 @@ class Scene {
         return this;
     }
 
-    renderTile(columnIndex: number, rowIndex: number, canvas: HTMLCanvasElement = this.canvas): this {
+    renderTile(
+        columnIndex: number,
+        rowIndex: number,
+        canvas: HTMLCanvasElement = this.canvas,
+        deltaX: number = 0,
+        deltaY: number = 0
+    ): this {
         const ctx = canvas.getContext('2d');
         const tileIndex = this.tiles[rowIndex][columnIndex];
 
@@ -54,8 +60,8 @@ class Scene {
             y,
             width,
             height,
-            columnIndex * width,
-            rowIndex * height,
+            columnIndex * width + deltaX,
+            rowIndex * height + deltaY,
             width,
             height,
         );
@@ -63,7 +69,7 @@ class Scene {
         return this;
     }
 
-    render(canvas: HTMLCanvasElement = this.canvas): this {
+    render(canvas: HTMLCanvasElement = this.canvas, x: number = 0, y: number = 0): this {
         if (!this.tilesheet) {
             throw new Error('Scene::render: tilesheet is not defined.');
         }
@@ -81,7 +87,7 @@ class Scene {
 
         this.tiles.forEach((rowTiles, rowIndex) => {
             rowTiles.forEach((tileIndex, columnIndex) => {
-                this.renderTile(columnIndex, rowIndex, canvas);
+                this.renderTile(columnIndex, rowIndex, canvas, x, y);
             });
         });
 

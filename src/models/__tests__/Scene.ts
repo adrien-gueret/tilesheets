@@ -129,6 +129,16 @@ describe('Scene', () => {
                 scene.tilesheet.image, 100, 150, 16, 16, 32, 16, 16, 16,
             );
         });
+
+        it('should handle delta coordinates', () => {
+            scene.canvas.getContext = jest.fn(() => ctx);
+
+            scene.renderTile(2, 1, scene.canvas, 10, 20);
+
+            expect(ctx.drawImage).toHaveBeenCalledWith(
+                scene.tilesheet.image, 100, 150, 16, 16, 42, 36, 16, 16,
+            );
+        });
     });
 
     describe('render', () => {
