@@ -59,14 +59,14 @@ describe('Scene', () => {
         });
      });
 
-     describe('setCanvas', () => {
+     describe('getCanvas/setCanvas', () => {
         it('should set canvas', () => {
-            expect(scene.canvas).toBe(canvas);
+            expect(scene.getCanvas()).toBe(canvas);
 
             const newCanvas = document.createElement('canvas');
             scene.setCanvas(newCanvas);
 
-            expect(scene.canvas).toBe(newCanvas);
+            expect(scene.getCanvas()).toBe(newCanvas);
         });
      });
 

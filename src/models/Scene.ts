@@ -28,6 +28,10 @@ class Scene {
         return this.tiles.length * height;
     }
 
+    getCanvas(): HTMLCanvasElement {
+        return this.canvas;
+    }
+
     setCanvas(canvas: HTMLCanvasElement): this {
         this.canvas = canvas;
         return this;
