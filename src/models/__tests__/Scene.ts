@@ -237,7 +237,7 @@ describe('Scene', () => {
         });
     });
 
-    describe('useTilesheet', () => {
+    describe('playAnimations', () => {
         beforeEach(() => {
             jest.useFakeTimers();
 
@@ -250,6 +250,42 @@ describe('Scene', () => {
             }]);
         });
 
+        it('should clear current animations', () => {
+            scene.stopAnimations = jest.fn();
+
+            scene.playAnimations();
+
+            expect(scene.stopAnimations).toHaveBeenCalled();
+        });
+
+        it('should set new animations', () => {
+            scene.updateTilesFromArray = jest.fn();
+            scene.playAnimations();
+            expect(scene.animationClocks).toHaveLength(2);
+
+            jest.advanceTimersByTime(300);
+
+            expect(scene.updateTilesFromArray).toHaveBeenCalledTimes(2);
+        });
+    });
+
+    describe('stopAnimations', () => {
+        it('should clear current animations', () => {
+            scene.animationClocks = [123, 234];
+            window.clearInterval = jest.fn();
+
+            scene.stopAnimations();
+
+            expect(window.clearInterval).toHaveBeenCalledWith(123);
+            expect(window.clearInterval).toHaveBeenCalledWith(234);
+        });
+    }),
+
+    describe('useTilesheet', () => {
+        beforeEach(() => {
+            scene.playAnimations = jest.fn();
+        });
+
         it('should set given tilesheet', () => {
             scene.tilesheet = null;
 
@@ -258,24 +294,10 @@ describe('Scene', () => {
             expect(scene.tilesheet).toBe(sheet);
         });
 
-        it('should clear current animations', () => {
-            scene.animationClocks = [123, 234];
-            window.clearInterval = jest.fn();
-
+        it('should play animations', () => {
             scene.useTilesheet(sheet);
 
-            expect(window.clearInterval).toHaveBeenCalledWith(123);
-            expect(window.clearInterval).toHaveBeenCalledWith(234);
-        });
-
-        it('should set new animations', () => {
-            scene.updateTilesFromArray = jest.fn();
-            scene.useTilesheet(sheet);
-            expect(scene.animationClocks).toHaveLength(2);
-
-            jest.advanceTimersByTime(300);
-
-            expect(scene.updateTilesFromArray).toHaveBeenCalledTimes(2);
+            expect(scene.playAnimations).toHaveBeenCalled();
         });
     });
 });

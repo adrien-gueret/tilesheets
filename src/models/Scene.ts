@@ -124,13 +124,9 @@ class Scene {
         return nextTileIndex;
     }
 
-    useTilesheet(tilesheet: Tilesheet): this {
-        this.tilesheet = tilesheet;
-
-        this.animationClocks.forEach((clock) => {
-            window.clearInterval(clock);
-        });
-
+    playAnimations(): this {
+        this.stopAnimations();
+        
         this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
             let tileIndex = 0;
 
@@ -138,7 +134,22 @@ class Scene {
                 tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex);
             }, animation.speed);
         });
-    
+
+        return this;
+    }
+
+    stopAnimations(): this {
+        this.animationClocks.forEach((clock) => {
+            window.clearInterval(clock);
+        });
+        return this;
+    }
+
+    useTilesheet(tilesheet: Tilesheet): this {
+        this.tilesheet = tilesheet;
+
+        this.playAnimations();
+
         return this;
     }
 }
