@@ -68,6 +68,12 @@ describe('Scene', () => {
 
             expect(scene.getCanvas()).toBe(newCanvas);
         });
+
+        it('should try to resize canvas', () => {
+            scene.resizeCanvas = jest.fn();
+            scene.setCanvas({});
+            expect(scene.resizeCanvas).toHaveBeenCalled();
+        });
      });
 
      describe('setTile', () => {
@@ -141,6 +147,20 @@ describe('Scene', () => {
         });
     });
 
+    describe('resizeCanvas', () => {
+        it('should set scene canvas width and height', () => {
+            scene.resizeCanvas();
+
+            expect(scene.canvas.width).toBe(80);
+            expect(scene.canvas.height).toBe(40);
+        });
+
+        it('should not throw error if no canvas', () => {
+            scene.canvas = null;
+            expect(() => scene.resizeCanvas()).not.toThrow();
+        });
+    });
+
     describe('render', () => {
         beforeEach(() => {
             scene.renderTile = jest.fn();
@@ -169,13 +189,6 @@ describe('Scene', () => {
             scene.render(canvas);
 
             expect(scene.canvas).toBe(canvas);
-        });
-
-        it('should set scene canvas width and height', () => {
-            scene.render();
-
-            expect(scene.canvas.width).toBe(80);
-            expect(scene.canvas.height).toBe(40);
         });
     });
 
@@ -298,6 +311,12 @@ describe('Scene', () => {
             scene.useTilesheet(sheet);
 
             expect(scene.playAnimations).toHaveBeenCalled();
+        });
+
+        it('should try to resize canvas', () => {
+            scene.resizeCanvas = jest.fn();
+            scene.useTilesheet(sheet);
+            expect(scene.resizeCanvas).toHaveBeenCalled();
         });
     });
 });

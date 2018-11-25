@@ -34,6 +34,16 @@ class Scene {
 
     setCanvas(canvas: HTMLCanvasElement): this {
         this.canvas = canvas;
+        this.resizeCanvas();
+        return this;
+    }
+
+    resizeCanvas(): this {
+        if(this.canvas && this.tilesheet) {
+            this.canvas.width = this.getWidth();
+            this.canvas.height = this.getHeight();
+        }
+        
         return this;
     }
 
@@ -78,12 +88,7 @@ class Scene {
             throw new Error('Scene::render: no canvas provided.');
         }
 
-        if (canvas !== this.canvas) {
-            this.canvas = canvas;
-        } else {
-            canvas.width = this.getWidth();
-            canvas.height = this.getHeight();
-        }
+        this.canvas = canvas;
 
         this.tiles.forEach((rowTiles, rowIndex) => {
             rowTiles.forEach((tileIndex, columnIndex) => {
@@ -148,6 +153,7 @@ class Scene {
     useTilesheet(tilesheet: Tilesheet): this {
         this.tilesheet = tilesheet;
 
+        this.resizeCanvas();
         this.playAnimations();
 
         return this;
