@@ -104,7 +104,7 @@ class Scene {
         return this;
     }
 
-    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number): number {
+    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number, deltaX: number = 0, deltaY: number = 0): number {
         let nextTileIndex = currentTileIndex + 1;
 
         if (!tiles[nextTileIndex]) {
@@ -121,7 +121,7 @@ class Scene {
                 this.setTile(columnIndex, rowIndex, newTile);
 
                 if (this.canvas) {
-                    this.renderTile(columnIndex, rowIndex);
+                    this.renderTile(columnIndex, rowIndex, this.canvas, deltaX, deltaY);
                 }
             });
         });
@@ -129,14 +129,14 @@ class Scene {
         return nextTileIndex;
     }
 
-    playAnimations(): this {
+    playAnimations(x: number = 0, y: number = 0): this {
         this.stopAnimations();
         
         this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
             let tileIndex = 0;
 
             return window.setInterval(() => {
-                tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex);
+                tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex, x, y);
             }, animation.speed);
         });
 
