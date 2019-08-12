@@ -51,7 +51,8 @@
             }
 
             #bush_sample, #canvas_bush_sample, #canvas_bush_sample2, #canvas_sprite_animated,
-            #canvas_sprite_animated_advanced {
+            #canvas_sprite_animated_advanced, #canvas_sprite_yoshi_animated, #canvas_sprite_yellow_yoshi_animated,
+            #canvas_paletted_sprite {
                 transform: scale(4);
                 margin: 65px auto 20px auto;
             }
@@ -95,6 +96,7 @@
                     <li><a href="#tilesheet">Tilesheet</a></li>
                     <li><a href="#sprite">Sprite</a></li>
                     <li><a href="#scene">Scene</a></li>
+                    <li><a href="#palette">Paletted sprite</a></li>
                 </ul>
             </nav>
         </div>
@@ -218,7 +220,7 @@ sheetSpring.setAnimations([waterAnimation, flowerAnimation]);</code></pre>
                 <h2 id="sprite" class="title">Sprite</h2>
                 <h3 class="subtitle">Basic usage</h3>
                 <p>
-                    A sprite is an object manipulating tiles, displaying theme one by one in a <code>canvas</code> element.
+                    A sprite is an object manipulating tiles, displaying them one by one in a <code>canvas</code> element.
                 </p>
                 <pre><code class="language-js">import { Sprite, Tilesheet } from 'tilesheets';
 
@@ -300,7 +302,7 @@ springSheet.waitForLoading().then(() => {
                     characters, vehicles or monsters.
                 </p>
                 <p>
-                    If we want to display and animate decors, it would be better to use a scene...
+                    If we want to display and animate decors, it would be better to use <a href="#scene">a scene</a>.
                 </p>
             </div>
         </section>
@@ -423,7 +425,133 @@ function switchSeason(season) {
                         </figcaption>
                     </figure>
             </div>
-        </section>        
+        </section> 
+        
+        <section class="section">
+            <div class="container">
+                <h2 id="palette" class="title">Paletted sprites</h2>
+                <h3 class="subtitle">Using palettes</h3>
+                    
+                <p>
+                    By default, sprites render directly the image of the tilesheet they're using, without any changes on it.
+                    It's possible to use other palettes than the default one, in order to dynamically switch colors of the sprites.
+                </p>
+                <p>For this section, we'll use this tilesheet containing two tiles of Yoshi:</p>
+
+                <figure class="has-text-centered">
+                    <img src="./images/yoshi.png" alt="Yoshi" />
+                    <figcaption class="is-size-7">
+                        Tiles extracted from
+                        <a href="https://www.spriters-resource.com/game_boy_advance/sma3/">
+                            The Spriters Resource
+                        </a>
+                        from
+                        <a href="https://www.nintendo.com/games/detail/yoshis-island-super-mario-advance-3-wii-u/">
+                            Super Mario Advance 3: Yoshi's Island
+                        </a>
+                    </figcaption>
+                </figure>
+
+                <p>As we've seen before, it's quite easy to render these tiles via an animated sprite:</p>
+
+                <pre><code class="language-js">yoshiSprite
+    .useTilesheet(sheetYoshi)   // Use the main sheet with Yoshi tiles
+    .playAnimation('hourray');  // Play the hourray animation</code></pre>
+
+                <figure class="has-text-centered">
+                    <canvas id="canvas_sprite_yoshi_animated"></canvas>
+                    <figcaption class="is-size-7">
+                        <br /><br />
+                        Hello Yoshi!
+                    </figcaption>
+                </figure>
+
+                <p>
+                    As you may know, there are a lot of different Yoshi colors... We don't really want to
+                    make our tilesheet bigger by adding new tiles on it, so how can we display a yellow Yoshi?<br />
+                    By using palettes!
+                </p>
+
+                <p>
+                    First we have to define the reference palette of the Yoshi tilesheet. It's simply another tilesheet loading an image which contains only colors.
+                    For our example, the image of the palette is this one:
+                </p>
+
+                <figure class="has-text-centered">
+                    <img src="./images/green_yoshi_palette.png" alt="Green Yoshi palette" />
+                    <figcaption class="is-size-7">
+                        As you can see, it's a really small picture containing only the colors of our sprite.
+                    </figcaption>
+                </figure>
+
+                <p>This image will be loaded as a tilesheet:</p>
+
+                <pre><code class="language-js">const sheetGreenYoshiPalette = new Tilesheet('./images/green_yoshi_palette.png');
+sheetGreenYoshiPalette.setTileSize(5).setMargin(0);</code></pre>
+
+                <p>Then, we can tell the tilesheet with Yoshi to use the palette of this new tilesheet as a reference:</p>
+
+                <pre><code class="language-js">sheetYoshi.setReferencePalette(sheetGreenYoshiPalette.getReferencePalette());</code></pre>
+
+                <p>This operation allows <em>Tilesheets.js</em> to know how to handle and link colors. When done, we can create new palettes and use them!</p>
+
+                <p>Let's say we have this palette image:</p>
+
+                <figure class="has-text-centered">
+                    <img src="./images/yellow_yoshi_palette.png" alt="Yellow Yoshi palette" />
+                    <figcaption class="is-size-7">
+                        An other small image containing another colors palette for Yoshi.
+                    </figcaption>
+                </figure>
+
+                <p>We can define this image as a palette, like we've done before for the reference one:</p>
+
+                <pre><code class="language-js">const sheetYellowYoshiPalette = new Tilesheet('./images/yellow_yoshi_palette.png');
+sheetYellowYoshiPalette.setTileSize(5).setMargin(0);
+
+const yellowYoshiPalette = sheetYellowYoshiPalette.getReferencePalette();</code></pre>
+
+                <p>Now that the palette is defined, we can tell the sprite to use it:</p>
+
+                <pre><code class="language-js">yoshiSprite
+    .useTilesheet(sheetYoshi)       // Use the main sheet with Yoshi tiles
+    .usePalette(yellowYoshiPalette) // Use the yellow palette we've just defined
+    .playAnimation('hourray');      // Play the hourray animation</code></pre>
+
+                <figure class="has-text-centered">
+                    <canvas id="canvas_sprite_yellow_yoshi_animated"></canvas>
+                    <figcaption class="is-size-7">
+                        <br /><br />
+                        Hello Yellow Yoshi!
+                    </figcaption>
+                </figure>
+
+                <p>
+                    Palettes are a powerful tool to color-swap sprites without having to draw them enterly in a PNG file. Simply define a
+                    new palette file and you're done!
+                </p>
+
+                <p>
+                    It's of course possible to switch palettes on the fly, by calling the method <code>usePalette()</code> when we want to,
+                    as shown in the below example:
+                </p>
+
+                <figure class="has-text-centered">
+                    <canvas id="canvas_paletted_sprite"></canvas>
+                    <figcaption class="is-size-7">
+                        <br /><br />
+                        <b>Select palette:</b><br />
+                        <button class="button is-success" data-palette="0">Green</button>
+                        <button class="button is-warning" data-palette="1">Yellow</button>
+                        <button class="button is-danger" data-palette="2">Red</button>
+                        <button class="button is-info" data-palette="3">Blue</button>
+                        <button class="button is-dark" data-palette="4">Custom</button>
+                        <br />(It also updates the favicon of this page, check the tab!)
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
         <script src="./index.ts"></script>
     </body>
 </html>
