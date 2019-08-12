@@ -1,12 +1,16 @@
 import Animation from '../interfaces/Animation';
 import Rectangle from '../interfaces/Rectangle';
 
+import Palette from './Palette';
+
 class Tilesheet {
     private image: HTMLImageElement;
     private tileWidth: number = 16;
     private tileHeight: number = 16;
     private margin: number = 1;
     private animations: Array<Animation> = [];
+    private referencePalette: Palette = null;
+    private palettedImages: Map<Palette, HTMLCanvasElement> = new Map();
 
     constructor(imagePath: string) {
         this.image = new Image();
@@ -44,8 +48,54 @@ class Tilesheet {
         return this;
     }
 
-    getImage(): HTMLImageElement {
-        return this.image;
+    private generatePalettedImage(palette: Palette): HTMLCanvasElement {
+        if (!this.image.complete) {
+            throw new Error('Tilesheets::generatePalettedImage: image is not fully loaded yet.');
+        }
+
+        const referencePalette = this.getReferencePalette();
+        const { canvas: palettedImage, ctx, imageData } = this.initNewCanvasWithImage();
+        const pixelData = imageData.data;
+
+        for (let i = 0, l = pixelData.length; i < l; i += 4) {
+            const red = pixelData[i];
+            const green = pixelData[i + 1];
+            const blue = pixelData[i + 2];
+            const alpha = pixelData[i + 3];
+
+            const color = [red, green, blue, alpha] as [number, number, number, number];
+
+            const index = referencePalette.getIndexFromColor(color);
+
+            if (index < 0) {
+                continue;
+            }
+
+            const [newRed, newGreen, newBlue, newAlpha] = palette.getColorByIndex(index);
+            
+            pixelData[i] = newRed;
+            pixelData[i + 1] = newGreen;
+            pixelData[i + 2] = newBlue;
+            pixelData[i + 3] = newAlpha;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        this.palettedImages.set(palette, palettedImage);
+       
+        return palettedImage;
+    }
+
+    getImage(paletteToUse?: Palette): HTMLImageElement|HTMLCanvasElement {
+        if (!paletteToUse) {
+            return this.image;
+        }
+
+        if (!this.palettedImages.has(paletteToUse)) {
+            this.generatePalettedImage(paletteToUse);
+        }
+    
+        return this.palettedImages.get(paletteToUse);
     }
 
     getTileRect(tileIndex: number): Rectangle {
@@ -95,6 +145,56 @@ class Tilesheet {
         });
 
         return domElement;
+    }
+
+    initNewCanvasWithImage(): {
+        canvas: HTMLCanvasElement,
+        ctx: CanvasRenderingContext2D,
+        imageData: ImageData,
+    } {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const { width, height } = this.image;
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(this.image, 0, 0, width, height);
+
+        const imageData = ctx.getImageData(0, 0, width, height);
+
+        return { canvas, ctx, imageData };
+    }
+
+    getReferencePalette(): Palette {
+        if (!this.image.complete) {
+            throw new Error('Tilesheets::getReferencePalette: image is not fully loaded yet.');
+        }
+
+        if (this.referencePalette) {
+            return this.referencePalette;
+        }
+
+        this.referencePalette = new Palette();
+
+        const { canvas, ctx, imageData } = this.initNewCanvasWithImage();
+        const pixelData = imageData.data;
+
+        for (let i = 0, l = pixelData.length; i < l; i += 4) {
+            const red = pixelData[i];
+            const green = pixelData[i + 1];
+            const blue = pixelData[i + 2];
+            const alpha = pixelData[i + 3];
+
+            this.referencePalette.addColor([red, green, blue, alpha]);
+        }
+
+        return this.referencePalette;
+    }
+
+    setReferencePalette(palette: Palette): this {
+        this.referencePalette = palette;
+        return this;
     }
 
     async waitForLoading() {

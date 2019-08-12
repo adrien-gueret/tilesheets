@@ -1,7 +1,8 @@
-import Animation from '../interfaces/Animation';
+import Palette from './Palette';
 import Tilesheet from './Tilesheet';
 
 export default class Sprite {
+    private palette: Palette = null;
     private tilesheet: Tilesheet;
     private canvas: HTMLCanvasElement;
     private currentTileIndex: number = 0;
@@ -73,7 +74,7 @@ export default class Sprite {
         const ctx = canvas.getContext('2d');
 
         ctx.drawImage(
-            this.tilesheet.getImage(),
+            this.tilesheet.getImage(this.palette),
             x,
             y,
             width,
@@ -84,6 +85,11 @@ export default class Sprite {
             height,
         );
 
+        return this;
+    }
+
+    usePalette(palette?: Palette): this {
+        this.palette = palette;
         return this;
     }
 
