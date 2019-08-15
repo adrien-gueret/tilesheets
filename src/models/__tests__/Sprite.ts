@@ -1,5 +1,6 @@
 jest.mock('../Tilesheet.ts');
 
+import Palette from '../Palette';
 import Sprite from '../Sprite';
 import Tilesheet from '../Tilesheet';
 
@@ -203,6 +204,16 @@ describe('Sprite', () => {
 
             expect(sprite.currentTileIndex).toBe(9);
             expect(sprite.stopAnimation).toHaveBeenCalled();
+        });
+    });
+
+    describe('usePalette', () => {
+        it('should set palette', () => {
+            const newPalette = new Palette();
+
+            sprite.usePalette(newPalette);
+
+            expect(sprite.palette).toBe(newPalette);
         });
     });
 });
