@@ -48,7 +48,7 @@ class Tilesheet {
         return this;
     }
 
-    private generatePalettedImage(palette: Palette): HTMLCanvasElement {
+    generatePalettedImage(palette: Palette): HTMLCanvasElement {
         if (!this.image.complete) {
             throw new Error('Tilesheets::generatePalettedImage: image is not fully loaded yet.');
         }
@@ -92,7 +92,7 @@ class Tilesheet {
         }
 
         if (!this.palettedImages.has(paletteToUse)) {
-            this.generatePalettedImage(paletteToUse);
+            return this.generatePalettedImage(paletteToUse);
         }
     
         return this.palettedImages.get(paletteToUse);
@@ -175,9 +175,9 @@ class Tilesheet {
             return this.referencePalette;
         }
 
-        this.referencePalette = new Palette();
+        this.setReferencePalette(new Palette());
 
-        const { canvas, ctx, imageData } = this.initNewCanvasWithImage();
+        const { imageData } = this.initNewCanvasWithImage();
         const pixelData = imageData.data;
 
         for (let i = 0, l = pixelData.length; i < l; i += 4) {

@@ -1,4 +1,5 @@
 import Tilesheet from '../Tilesheet';
+import Palette from '../Palette';
 
 describe('Tilesheet', () => {
     let sheet;
@@ -55,10 +56,11 @@ describe('Tilesheet', () => {
         });
     });
 
-    describe('getImage', () => {
-        it('should return sheet image', () => {
-            const  image = sheet.getImage();
-            expect(image).toBe(sheet.image);
+    describe('setReferencePalette', () => {
+        it('should set reference palette', () => {
+            const palette = new Palette();
+            sheet.setReferencePalette(palette);
+            expect(sheet.referencePalette).toBe(palette);
         });
     });
 
@@ -354,6 +356,169 @@ describe('Tilesheet', () => {
             });
 
             sheet.image.onerror();
+        });
+    });
+
+    describe('initNewCanvasWithImage', () => {
+        let expectedCtx;
+        let expectedImageData;
+
+        beforeEach(() => {
+            expectedCtx = { getImageData: jest.fn(() => expectedImageData), drawImage: jest.fn() };
+            HTMLCanvasElement.prototype.getContext = jest.fn(() => expectedCtx);
+            sheet.image = { width: 200, height: 200 };
+        });
+
+        it('should return an object with canvas, context and imageData', () => {
+            const { canvas, ctx, imageData } = sheet.initNewCanvasWithImage();
+
+            expect(canvas).toBeInstanceOf(HTMLCanvasElement);
+            expect(ctx).toBe(expectedCtx);
+            expect(imageData).toBe(expectedImageData);
+            expect(ctx.drawImage).toHaveBeenCalledWith(sheet.image, 0, 0, 200, 200);
+            expect(ctx.getImageData).toHaveBeenCalledWith(0, 0, 200, 200);
+       }); 
+    });
+
+    describe('getReferencePalette', () => {
+        beforeEach(() => {
+            sheet.image = {};
+        });
+
+        describe('when image is not complete', () => {
+            beforeEach(() => {
+                sheet.image.complete = false;
+            });
+
+            it('should throw an error if image is not complete', () => {
+                expect(() => sheet.getReferencePalette()).toThrow();
+            });
+        });
+
+        describe('when image is complete', () => {
+            beforeEach(() => {
+                const imageData = {
+                    data: [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255],
+                };
+
+                sheet.image.complete = true;
+                sheet.initNewCanvasWithImage = jest.fn(() => ({ imageData }));
+            });
+
+            it('should return reference palette if exists', () => {
+                const expectedReferencePalette = new Palette();
+                sheet.setReferencePalette(expectedReferencePalette);
+                
+                const referencePalette = sheet.getReferencePalette();
+                expect(referencePalette).toBe(expectedReferencePalette);
+            });
+
+            it('should generate and set new reference palette if none yet', () => {
+                sheet.setReferencePalette(null);
+                
+                const referencePalette = sheet.getReferencePalette();
+                expect(referencePalette).toBeInstanceOf(Palette);
+            });
+        });
+    });
+
+    describe('generatePalettedImage', () => {
+        let palette: Palette;
+
+        beforeEach(() => {
+            sheet.image = {};
+            palette = new Palette();
+            palette.addColor([0, 255, 0, 255]);
+            palette.addColor([255, 0, 0, 255]);                
+        });
+
+        describe('when image is not complete', () => {
+            beforeEach(() => {
+                sheet.image.complete = false;
+            });
+
+            it('should throw an error if image is not complete', () => {
+                expect(() => sheet.generatePalettedImage(palette)).toThrow();
+            });
+        });
+
+        describe('when image is complete', () => {
+            let canvas;
+
+            beforeEach(() => {
+                sheet.image.complete = true;
+
+                const referencePalette = new Palette();
+                referencePalette.addColor([255, 0, 0, 255]);
+                referencePalette.addColor([0, 255, 0, 255]);
+            
+                sheet.getReferencePalette = jest.fn(() => referencePalette);
+
+                const imageData = {
+                    data: [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255],
+                };
+
+                const ctx = { putImageData: jest.fn() };
+                sheet.initNewCanvasWithImage = jest.fn(() => ({
+                    canvas,
+                    ctx,
+                    imageData,
+
+                }));
+            });
+
+            it('should store and return a canvas', () => {
+                const palettedImage = sheet.generatePalettedImage(palette);
+                expect(sheet.palettedImages.get(palette)).toBe(canvas);
+                expect(palettedImage).toBe(canvas);
+            });
+        });
+    });
+
+    describe('getImage', () => {
+        beforeEach(() => {
+            jest.spyOn(sheet, 'generatePalettedImage');
+        });
+
+        describe('without palette', () => {
+            it('should return sheet image', () => {
+                const  image = sheet.getImage();
+                expect(image).toBe(sheet.image);
+            });
+        });
+
+        describe('with palette', () => {
+            let palette: Palette;
+            let image: HTMLCanvasElement;
+
+            beforeEach(() => {
+                palette = new Palette();
+                image = document.createElement('canvas');
+            });
+
+            describe('with stored image for given palette', () => {
+                beforeEach(() => {
+                    sheet.palettedImages.set(palette, image);
+                });
+
+                it('should return stored image', () => {
+                    const  sheetImage = sheet.getImage(palette);
+                    expect(sheetImage).toBe(image);
+                });
+            });
+
+            describe('without stored image for given palette', () => {
+                beforeEach(() => {
+                    sheet.generatePalettedImage.mockReturnValue(image);
+                });
+
+                it('should generate and return a new image', () => {
+                    const  sheetImage = sheet.getImage(palette);
+                    
+                    expect(sheet.generatePalettedImage).toHaveBeenCalledWith(palette);
+                    expect(sheetImage).toBe(image);
+                });
+            });
         });
     });
 });
