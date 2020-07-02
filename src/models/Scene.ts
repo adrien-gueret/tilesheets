@@ -1,3 +1,4 @@
+import Timer, { Counter } from '../interfaces/Timer';
 import Tilesheet from './Tilesheet';
 
 function cloneDeepArrays(arraysToClone) {
@@ -9,12 +10,14 @@ class Scene {
     private tiles: Array<Array<number>>;
     private tilesheet: Tilesheet;
     private canvas: HTMLCanvasElement;
-    private animationClocks: Array<number> = [];
+    private timer: Timer;
+    private animationClocks: Array<Counter> = [];
 
-    constructor(tiles: Array<Array<number>> = [], canvas: HTMLCanvasElement = null) {
+    constructor(tiles: Array<Array<number>> = [], canvas: HTMLCanvasElement = null, timer: Timer = window) {
         this.initialTiles = cloneDeepArrays(tiles);
         this.tiles = cloneDeepArrays(tiles);
         this.canvas = canvas;
+        this.timer = timer;
     }
 
     getWidth(): number {
@@ -135,7 +138,7 @@ class Scene {
         this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
             let tileIndex = 0;
 
-            return window.setInterval(() => {
+            return this.timer.setInterval(() => {
                 tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex, x, y);
             }, animation.speed);
         });
@@ -145,7 +148,7 @@ class Scene {
 
     stopAnimations(): this {
         this.animationClocks.forEach((clock) => {
-            window.clearInterval(clock);
+            this.timer.clearInterval(clock);
         });
         return this;
     }

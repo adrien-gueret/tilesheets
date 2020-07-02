@@ -40,6 +40,7 @@ describe('Scene', () => {
             expect(defaultScene.initialTiles).toEqual([]);
             expect(defaultScene.tiles).toEqual([]);
             expect(defaultScene.canvas).toBeNull();
+            expect(defaultScene.timer).toBe(window);
         })
     });
 
