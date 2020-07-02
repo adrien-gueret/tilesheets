@@ -26,6 +26,7 @@ describe('Sprite', () => {
 
         it('should handle defaultvalues', () => {
             expect(defaultSprite.canvas).toBeNull();
+            expect(defaultSprite.timer).toBe(window);
         })
     });
 

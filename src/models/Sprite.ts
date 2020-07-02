@@ -1,3 +1,4 @@
+import Timer, { Counter } from '../interfaces/Timer';
 import Palette from './Palette';
 import Tilesheet from './Tilesheet';
 
@@ -6,10 +7,12 @@ export default class Sprite {
     private tilesheet: Tilesheet;
     private canvas: HTMLCanvasElement;
     private currentTileIndex: number = 0;
-    private animationClock: number;
+    private timer: Timer;
+    private animationClock: Counter;
 
-    constructor(canvas: HTMLCanvasElement = null) {
+    constructor(canvas: HTMLCanvasElement = null, timer = window) {
         this.canvas = canvas;
+        this.timer = timer;
     }
 
     setCanvas(canvas: HTMLCanvasElement): this {
@@ -23,7 +26,7 @@ export default class Sprite {
     }
 
     stopAnimation(): this {
-        window.clearInterval(this.animationClock);
+        this.timer.clearInterval(this.animationClock);
         return this;
     }
 
@@ -56,7 +59,7 @@ export default class Sprite {
         let currentAnimationIndex = 0;
         this.setCurrentTile(animation.tiles[currentAnimationIndex]).render();
 
-        this.animationClock = window.setInterval(() => {
+        this.animationClock = this.timer.setInterval(() => {
             currentAnimationIndex = this.updateTilesFromArray(animation.tiles, currentAnimationIndex, shouldLoop);
         }, animation.speed);
 
