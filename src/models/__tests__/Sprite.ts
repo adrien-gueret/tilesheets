@@ -166,13 +166,47 @@ describe('Sprite', () => {
         });
 
         it('should play given animation', () => {
-            sprite.playAnimation('foo');
+            const shouldLoop = false;
+            const onUpdate = jest.fn();
+            const onEnd = jest.fn();
+            const shouldRender = false;
+
+            sprite.playAnimation('foo', shouldLoop, onUpdate, onEnd, shouldRender);
 
             expect(sprite.animationClock).toBeDefined();
 
             jest.advanceTimersByTime(300);
 
-            expect(sprite.updateTilesFromArray).toHaveBeenCalled();
+            expect(sprite.updateTilesFromArray)
+                .toHaveBeenCalledWith([4, 5, 6], 0, shouldLoop, onUpdate, onEnd, shouldRender);
+        });
+
+        it('should fire given onUpdate function', () => {
+            const onUpdate = jest.fn();
+
+            sprite.playAnimation('foo', true, onUpdate);
+
+            expect(onUpdate).toHaveBeenCalled();
+        });
+
+        it('should fire render function', () => {
+            sprite.render = jest.fn();
+
+            sprite.playAnimation('foo');
+
+            expect(sprite.render).toHaveBeenCalled();
+        });
+
+        it('should NOT fire render function', () => {
+            const shouldLoop = false;
+            const onUpdate = jest.fn();
+            const onEnd = jest.fn();
+            const shouldRender = false;
+
+            sprite.render = jest.fn();
+            sprite.playAnimation('foo', shouldLoop, onUpdate, onEnd, shouldRender);
+
+            expect(sprite.render).not.toHaveBeenCalled();
         });
     });
 
@@ -191,20 +225,51 @@ describe('Sprite', () => {
         });
 
         it('should replace current tile index with the first one if next index is out of range and if loop is requested', () => {
+            const shouldLoop = true;
+            const onUpdate = jest.fn();
+            const onEnd = jest.fn();
             sprite.currentTileIndex = 9;
 
-            sprite.updateTilesFromArray([5, 7, 9], 2, true);
+            sprite.updateTilesFromArray([5, 7, 9], 2, shouldLoop, onUpdate, onEnd);
 
             expect(sprite.currentTileIndex).toBe(5);
+            expect(onUpdate).toHaveBeenCalledWith(5);
+            expect(onEnd).not.toHaveBeenCalled();
         });
 
         it('should stop animation if next index is out of range and if loop is NOT requested', () => {
+            const shouldLoop = false;
+            const onUpdate = jest.fn();
+            const onEnd = jest.fn();
             sprite.currentTileIndex = 9;
 
-            sprite.updateTilesFromArray([5, 7, 9], 2);
+            sprite.updateTilesFromArray([5, 7, 9], 2, shouldLoop, onUpdate, onEnd);
 
             expect(sprite.currentTileIndex).toBe(9);
             expect(sprite.stopAnimation).toHaveBeenCalled();
+            expect(onUpdate).not.toHaveBeenCalled();
+            expect(onEnd).toHaveBeenCalled();
+        });
+
+        it('should fire render function', () => {
+            sprite.render = jest.fn();
+
+            sprite.updateTilesFromArray([5, 7, 9], 0);
+
+            expect(sprite.render).toHaveBeenCalled();
+        });
+
+        it('should NOT fire render function', () => {
+            const shouldLoop = false;
+            const onUpdate = jest.fn();
+            const onEnd = jest.fn();
+            const shouldRender = false;
+
+            sprite.render = jest.fn();
+            
+            sprite.updateTilesFromArray([5, 7, 9], 0, shouldLoop, onUpdate, onEnd, shouldRender);
+
+            expect(sprite.render).not.toHaveBeenCalled();
         });
     });
 

@@ -30,24 +30,49 @@ export default class Sprite {
         return this;
     }
 
-    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number, shouldLoop: boolean): number {
+    updateTilesFromArray(
+        tiles: Array<number>,
+        currentTileIndex: number,
+        shouldLoop: boolean = false,
+        /* istanbul ignore next */
+        onUpdate: Function = () => {},
+        /* istanbul ignore next */
+        onEnd: Function = () => {},
+        shouldRender: boolean = true
+    ): number {
         let nextTileIndex = currentTileIndex + 1;
 
         if (!tiles[nextTileIndex]) {
             nextTileIndex = 0;
 
             if (!shouldLoop) {
+                onEnd();
                 this.stopAnimation();
                 return nextTileIndex;
             }
         }
+
+        const newTile = tiles[nextTileIndex];
+        onUpdate(newTile);
         
-        this.setCurrentTile(tiles[nextTileIndex]).render();
+        this.setCurrentTile(newTile);
+        
+        if (shouldRender) {
+            this.render();
+        }
 
         return nextTileIndex;
     }
 
-    playAnimation(name: string, shouldLoop: boolean = true): this {
+    playAnimation(
+        name: string,
+        shouldLoop: boolean = true,
+        /* istanbul ignore next */
+        onUpdate: Function = () => {},
+        /* istanbul ignore next */
+        onEnd: Function = () => {},
+        shouldRender: boolean = true
+    ): this {
         const animation = this.tilesheet.getAnimation(name);
 
         if (!animation) {
@@ -57,10 +82,25 @@ export default class Sprite {
         this.stopAnimation();
 
         let currentAnimationIndex = 0;
-        this.setCurrentTile(animation.tiles[currentAnimationIndex]).render();
+
+        const firstTile = animation.tiles[currentAnimationIndex];
+        onUpdate(firstTile);
+
+        this.setCurrentTile(firstTile);
+
+        if (shouldRender) {
+            this.render();
+        }
 
         this.animationClock = this.timer.setInterval(() => {
-            currentAnimationIndex = this.updateTilesFromArray(animation.tiles, currentAnimationIndex, shouldLoop);
+            currentAnimationIndex = this.updateTilesFromArray(
+                animation.tiles,
+                currentAnimationIndex,
+                shouldLoop,
+                onUpdate,
+                onEnd,
+                shouldRender,
+            );
         }, animation.speed);
 
         return this;
