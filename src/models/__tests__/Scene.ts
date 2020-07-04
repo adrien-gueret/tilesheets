@@ -12,10 +12,10 @@ describe('Scene', () => {
 
     beforeEach(() => {
         tiles = [
-            [21, 22, 23, 24,  9],
-            [28, 29, 30, 31,  9],
-            [22,  5,  3,  6, 10],
-            [29,  5, 17, 17, 18],
+            [21,  22,  23,  24,   9],
+            [28,  29,  30,  31,   9],
+            [22,   5,null,   6,  10],
+            [29,   5,  17,  17,  18],
         ];
         canvas = document.createElement('canvas');
         scene = new Scene(tiles, canvas);
@@ -103,6 +103,7 @@ describe('Scene', () => {
         beforeEach(() => {
             ctx = {
                 drawImage: jest.fn(),
+                clearRect: jest.fn(),
             };
 
             scene.tilesheet.getTileRect.mockReturnValue({
@@ -145,6 +146,14 @@ describe('Scene', () => {
             expect(ctx.drawImage).toHaveBeenCalledWith(
                 scene.tilesheet.image, 100, 150, 16, 16, 42, 36, 16, 16,
             );
+        });
+
+        it('should render nothing if tile is null', () => {
+            scene.canvas.getContext = jest.fn(() => ctx);
+
+            scene.renderTile(2, 2, scene.canvas);
+
+            expect(ctx.clearRect).toHaveBeenCalledWith(32, 32, 16, 16);
         });
     });
 
@@ -200,37 +209,37 @@ describe('Scene', () => {
 
         it('should replace occurences of corresponding tile index with the next one', () => {
             expect(scene.tiles).toEqual([
-                [21, 22, 23, 24,  9],
-                [28, 29, 30, 31,  9],
-                [22,  5,  3,  6, 10],
-                [29,  5, 17, 17, 18],
+                [21,  22,  23,  24,   9],
+                [28,  29,  30,  31,   9],
+                [22,   5,null,   6,  10],
+                [29,   5,  17,  17,  18],
             ]);
 
             scene.updateTilesFromArray([17, 19], 0);
 
             expect(scene.tiles).toEqual([
-                [21, 22, 23, 24,  9],
-                [28, 29, 30, 31,  9],
-                [22,  5,  3,  6, 10],
-                [29,  5, 19, 19, 18],
+                [21,  22,  23,  24,   9],
+                [28,  29,  30,  31,   9],
+                [22,   5,null,   6,  10],
+                [29,   5,  19,  19,  18],
             ]);
         });
 
         it('should replace occurences of corresponding tile index with the first one if next index is out of range', () => {
             expect(scene.tiles).toEqual([
-                [21, 22, 23, 24,  9],
-                [28, 29, 30, 31,  9],
-                [22,  5,  3,  6, 10],
-                [29,  5, 17, 17, 18],
+                [21,  22,  23,  24,   9],
+                [28,  29,  30,  31,   9],
+                [22,   5,null,   6,  10],
+                [29,   5,  17,  17,  18],
             ]);
 
             scene.updateTilesFromArray([8, 9], 1);
 
             expect(scene.tiles).toEqual([
-                [21, 22, 23, 24,  8],
-                [28, 29, 30, 31,  8],
-                [22,  5,  3,  6, 10],
-                [29,  5, 17, 17, 18],
+                [21,  22,  23,  24,   8],
+                [28,  29,  30,  31,   8],
+                [22,   5,null,   6,  10],
+                [29,   5,  17,  17,  18],
             ]);
         });
 

@@ -5,15 +5,17 @@ function cloneDeepArrays(arraysToClone) {
     return arraysToClone.map(arr => arr.slice());
 }
 
+type TileNumber = number|null;
+
 class Scene {
-    private initialTiles: Array<Array<number>>;
-    private tiles: Array<Array<number>>;
+    private initialTiles: Array<Array<TileNumber>>;
+    private tiles: Array<Array<TileNumber>>;
     private tilesheet: Tilesheet;
     private canvas: HTMLCanvasElement;
     private timer: Timer;
     private animationClocks: Array<Counter> = [];
 
-    constructor(tiles: Array<Array<number>> = [], canvas: HTMLCanvasElement = null, timer: Timer = window) {
+    constructor(tiles: Array<Array<TileNumber>> = [], canvas: HTMLCanvasElement = null, timer: Timer = window) {
         this.initialTiles = cloneDeepArrays(tiles);
         this.tiles = cloneDeepArrays(tiles);
         this.canvas = canvas;
@@ -50,7 +52,7 @@ class Scene {
         return this;
     }
 
-    setTile(x: number, y: number, newTile: number): this {
+    setTile(x: number, y: number, newTile: TileNumber): this {
         this.tiles[y][x] = newTile;
         return this;
     }
@@ -67,17 +69,15 @@ class Scene {
 
         const { x, y, width, height } = this.tilesheet.getTileRect(tileIndex);
 
-        ctx.drawImage(
-            this.tilesheet.getImage(),
-            x,
-            y,
-            width,
-            height,
-            columnIndex * width + deltaX,
-            rowIndex * height + deltaY,
-            width,
-            height,
-        );
+        const destX = columnIndex * width + deltaX;
+        const destY = rowIndex * height + deltaY;
+
+        if (tileIndex === null) {
+            ctx.clearRect(destX, destY, width, height);
+            return this;
+        }
+
+        ctx.drawImage(this.tilesheet.getImage(), x, y, width, height, destX, destY, width, height);
 
         return this;
     }
@@ -107,7 +107,7 @@ class Scene {
         return this;
     }
 
-    updateTilesFromArray(tiles: Array<number>, currentTileIndex: number, deltaX: number = 0, deltaY: number = 0): number {
+    updateTilesFromArray(tiles: Array<TileNumber>, currentTileIndex: number, deltaX: number = 0, deltaY: number = 0): number {
         let nextTileIndex = currentTileIndex + 1;
 
         if (!tiles[nextTileIndex]) {
