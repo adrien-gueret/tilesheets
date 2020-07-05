@@ -330,27 +330,33 @@ describe('Tilesheet', () => {
     });
 
     describe('waitForLoading', () => {
+        beforeEach(() => {
+            sheet.image = {
+                complete: false,
+                callbacks: {},
+                onload: () => sheet.image.callbacks.load(),
+                onerror: () => sheet.image.callbacks.error(),
+                addEventListener: jest.fn((eventName, callback) => sheet.image.callbacks[eventName] = callback),
+            };
+        });
         it('should resolve directly if image is loaded', async () => {
-            sheet.image = { complete: true };
+            sheet.image.complete = true;
 
             await sheet.waitForLoading();
 
-            expect(sheet.image.onload).toBeUndefined();
+            expect(sheet.image.addEventListener).not.toHaveBeenCalled();
         });
 
         it('should resolve when image is loaded', (done) => {
-            sheet.image = { complete: false };
-
             sheet.waitForLoading().then(() => {
                 done();
             });
 
+            console.log('call listener');
             sheet.image.onload();
         });
 
         it('should reject if image can not be loaded', (done) => {
-            sheet.image = { complete: false };
-
             sheet.waitForLoading().catch(() => {
                 done();
             });

@@ -203,8 +203,8 @@ class Tilesheet {
         }
 
         return new Promise((resolve, reject) => {
-            this.image.onload = resolve;
-            this.image.onerror = reject;
+            this.image.addEventListener('load', resolve);
+            this.image.addEventListener('error', reject);
         });
     }
 }
