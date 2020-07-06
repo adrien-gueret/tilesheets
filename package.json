@@ -1,6 +1,6 @@
 {
   "name": "tilesheets",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "A small library providing helpers to handle tile sheets.",
   "main": "index.js",
   "scripts": {
