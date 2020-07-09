@@ -5,6 +5,7 @@ import Palette from './Palette';
 
 class Tilesheet {
     private image: HTMLImageElement;
+    private imagePath: string;
     private tileWidth: number = 16;
     private tileHeight: number = 16;
     private margin: number = 1;
@@ -12,9 +13,18 @@ class Tilesheet {
     private referencePalette: Palette = null;
     private palettedImages: Map<Palette, HTMLCanvasElement> = new Map();
 
-    constructor(imagePath: string) {
+    constructor(imagePath: string, shouldAutoload: boolean = true) {
         this.image = new Image();
-        this.image.src = imagePath;
+        this.imagePath = imagePath;
+        
+        if (shouldAutoload) {
+            this.load();
+        }
+    }
+
+    load(): this {
+        this.image.src = this.imagePath;
+        return this;
     }
 
     getAnimations(): Array<Animation> {
