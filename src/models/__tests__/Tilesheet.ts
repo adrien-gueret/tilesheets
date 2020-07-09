@@ -368,6 +368,7 @@ describe('Tilesheet', () => {
             beforeEach(() => {
                 sheet.image = {
                     complete: false,
+                    src: 'image.png',
                     callbacks: {},
                     onload: () => sheet.image.callbacks.load(),
                     onerror: () => sheet.image.callbacks.error(),
@@ -487,6 +488,7 @@ describe('Tilesheet', () => {
     
                 beforeEach(() => {
                     sheet.image.complete = true;
+                    sheet.image.src = 'image.png';
     
                     const referencePalette = new Palette();
                     referencePalette.addColor([255, 0, 0, 255]);

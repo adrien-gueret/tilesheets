@@ -208,7 +208,7 @@ class Tilesheet {
     }
 
     async waitForLoading() {
-        if (this.image.complete) {
+        if (this.image.src && this.image.complete) {
             return;
         }
 
