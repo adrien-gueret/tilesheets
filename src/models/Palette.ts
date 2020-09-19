@@ -5,7 +5,7 @@ function areColorsEqual(color1: Color, color2: Color): boolean {
 }
 
 export default class Palette {
-    private colors: Array<Color> =[];
+    protected colors: Array<Color> =[];
 
     addColor(color: Color): this {
         if (this.hasColor(color)) {

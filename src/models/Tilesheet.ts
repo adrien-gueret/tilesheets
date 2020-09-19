@@ -4,14 +4,14 @@ import Rectangle from '../interfaces/Rectangle';
 import Palette from './Palette';
 
 class Tilesheet {
-    private image: HTMLImageElement;
-    private imagePath: string;
-    private tileWidth: number = 16;
-    private tileHeight: number = 16;
-    private margin: number = 1;
-    private animations: Array<Animation> = [];
-    private referencePalette: Palette = null;
-    private palettedImages: Map<Palette, HTMLCanvasElement> = new Map();
+    protected image: HTMLImageElement;
+    protected imagePath: string;
+    protected tileWidth: number = 16;
+    protected tileHeight: number = 16;
+    protected margin: number = 1;
+    protected animations: Array<Animation> = [];
+    protected referencePalette: Palette = null;
+    protected palettedImages: Map<Palette, HTMLCanvasElement> = new Map();
 
     constructor(imagePath: string, shouldAutoload: boolean = true) {
         this.image = new Image();

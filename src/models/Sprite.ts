@@ -3,12 +3,12 @@ import Palette from './Palette';
 import Tilesheet from './Tilesheet';
 
 export default class Sprite {
-    private palette: Palette = null;
-    private tilesheet: Tilesheet;
-    private canvas: HTMLCanvasElement;
-    private currentTileIndex: number = 0;
-    private timer: Timer;
-    private animationClock: Counter;
+    protected palette: Palette = null;
+    protected tilesheet: Tilesheet;
+    protected canvas: HTMLCanvasElement;
+    protected currentTileIndex: number = 0;
+    protected timer: Timer;
+    protected animationClock: Counter;
 
     constructor(canvas: HTMLCanvasElement = null, timer = window) {
         this.canvas = canvas;

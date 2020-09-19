@@ -8,12 +8,12 @@ function cloneDeepArrays(arraysToClone) {
 type TileNumber = number|null;
 
 class Scene {
-    private initialTiles: Array<Array<TileNumber>>;
-    private tiles: Array<Array<TileNumber>>;
-    private tilesheet: Tilesheet;
-    private canvas: HTMLCanvasElement;
-    private timer: Timer;
-    private animationClocks: Array<Counter> = [];
+    protected initialTiles: Array<Array<TileNumber>>;
+    protected tiles: Array<Array<TileNumber>>;
+    protected tilesheet: Tilesheet;
+    protected canvas: HTMLCanvasElement;
+    protected timer: Timer;
+    protected animationClocks: Array<Counter> = [];
 
     constructor(tiles: Array<Array<TileNumber>> = [], canvas: HTMLCanvasElement = null, timer: Timer = window) {
         this.initialTiles = cloneDeepArrays(tiles);
