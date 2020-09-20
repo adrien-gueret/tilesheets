@@ -41,11 +41,28 @@ describe('Sprite', () => {
         });
     });
 
-    describe('setCurrentTile', () => {
-        it('should update current tile', () => {
+    describe('setTimer', () => {
+        it('should set timer', () => {
+            expect(sprite.timer).toBe(window);
+
+            const newTimer = {
+                setInterval() {},
+                clearInterval() {},
+
+            };
+            sprite.setTimer(newTimer);
+
+            expect(sprite.timer).toBe(newTimer);
+        });
+    });
+
+    describe('setCurrentTile/getCurrentTile', () => {
+        it('should update/get current tile', () => {
+            expect(sprite.getCurrentTile()).toBe(0);
+
             sprite.setCurrentTile(14);
 
-            expect(sprite.currentTileIndex).toBe(14);
+            expect(sprite.getCurrentTile()).toBe(14);
         });
     });
 
@@ -82,6 +99,11 @@ describe('Sprite', () => {
             sheet.getImage = jest.fn(() => image);
         });
 
+        it('should throw if sprite does not have tilesheet', () => {
+            sprite.tilesheet = null;
+            expect(() => sprite.render()).toThrow();
+        });
+
         it('should render sprite tile on sprite canvas', () => {
             sprite.canvas = {
                 getContext: jest.fn(() => ctx),
@@ -114,13 +136,13 @@ describe('Sprite', () => {
         });
     });
 
-    describe('useTilesheet', () => {
-        it('should set sprite tilesheet', () => {
+    describe('useTilesheet/getTilesheet', () => {
+        it('should get/set sprite tilesheet', () => {
             const newTilesheet = new Tilesheet('my-image.png');
 
             sprite.useTilesheet(newTilesheet);
 
-            expect(sprite.tilesheet).toBe(newTilesheet);
+            expect(sprite.getTilesheet()).toBe(newTilesheet);
         });
 
         it('should stop current animation', () => {
@@ -143,6 +165,11 @@ describe('Sprite', () => {
 
             sprite.render = jest.fn();
             sprite.updateTilesFromArray = jest.fn();
+        });
+
+        it('should throw if sprite does not have tilesheet', () => {
+            sprite.tilesheet = null;
+            expect(() => sprite.playAnimation('foo')).toThrow();
         });
 
         it('should throw if animation is not found', () => {

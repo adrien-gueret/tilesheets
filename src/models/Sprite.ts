@@ -3,14 +3,14 @@ import Palette from './Palette';
 import Tilesheet from './Tilesheet';
 
 export default class Sprite {
-    protected palette: Palette = null;
-    protected tilesheet: Tilesheet;
+    protected palette: Palette|null = null;
+    protected tilesheet: Tilesheet|null = null;
     protected canvas: HTMLCanvasElement;
     protected currentTileIndex: number = 0;
     protected timer: Timer;
     protected animationClock: Counter;
 
-    constructor(canvas: HTMLCanvasElement = null, timer = window) {
+    constructor(canvas: HTMLCanvasElement = null, timer: Timer = window) {
         this.canvas = canvas;
         this.timer = timer;
     }
@@ -18,6 +18,15 @@ export default class Sprite {
     setCanvas(canvas: HTMLCanvasElement): this {
         this.canvas = canvas;
         return this;
+    }
+
+    setTimer(timer: Timer): this {
+        this.timer = timer;
+        return this;
+    }
+
+    getCurrentTile(): number {
+        return this.currentTileIndex;
     }
 
     setCurrentTile(tileIndex: number): this {
@@ -73,6 +82,10 @@ export default class Sprite {
         onEnd: Function = () => {},
         shouldRender: boolean = true
     ): this {
+        if (!this.tilesheet) {
+            throw new Error(`Sprite::playAnimation: this sprite does not have any tilesheet`);
+        }
+
         const animation = this.tilesheet.getAnimation(name);
 
         if (!animation) {
@@ -107,6 +120,10 @@ export default class Sprite {
     }
 
     render(canvas: HTMLCanvasElement = this.canvas, destX: number = 0, destY: number = 0): this {
+        if (!this.tilesheet) {
+            throw new Error(`Sprite::render: this sprite does not have any tilesheet`);
+        }
+
         const { x, y, width, height } = this.tilesheet.getTileRect(this.currentTileIndex);
 
         if (canvas === this.canvas) {
@@ -140,5 +157,9 @@ export default class Sprite {
         this.tilesheet = tilesheet;
         this.stopAnimation();
         return this;
+    }
+
+    getTilesheet(): Tilesheet|null {
+        return this.tilesheet;
     }
 }

@@ -32,13 +32,13 @@ describe('Scene', () => {
     describe('constructor', () => {
         it('should correctly init scene', () => {
             expect(scene.initialTiles).toEqual(tiles);
-            expect(scene.tiles).toEqual(tiles);
+            expect(scene.getTiles()).toEqual(tiles);
             expect(scene.canvas).toEqual(canvas);
         })
 
         it('should handle defaultvalues', () => {
             expect(defaultScene.initialTiles).toEqual([]);
-            expect(defaultScene.tiles).toEqual([]);
+            expect(defaultScene.getTiles()).toEqual([]);
             expect(defaultScene.canvas).toBeNull();
             expect(defaultScene.timer).toBe(window);
         })
@@ -79,11 +79,11 @@ describe('Scene', () => {
 
      describe('setTile', () => {
         it('should update given tile', () => {
-            expect(scene.tiles[1]).toEqual([28, 29, 30, 31,  9]);
+            expect(scene.getTiles()[1]).toEqual([28, 29, 30, 31,  9]);
 
             scene.setTile(2, 1, 5);
 
-            expect(scene.tiles[1]).toEqual([28, 29, 5, 31,  9]);
+            expect(scene.getTiles()[1]).toEqual([28, 29, 5, 31,  9]);
         });
      });
 
@@ -93,7 +93,7 @@ describe('Scene', () => {
 
             scene.resetTiles();
 
-            expect(scene.tiles).toEqual(tiles);
+            expect(scene.getTiles()).toEqual(tiles);
         });
     });
 
@@ -304,7 +304,7 @@ describe('Scene', () => {
         });
     }),
 
-    describe('useTilesheet', () => {
+    describe('useTilesheet/getTilesheet', () => {
         beforeEach(() => {
             scene.playAnimations = jest.fn();
         });
@@ -314,7 +314,7 @@ describe('Scene', () => {
 
             scene.useTilesheet(sheet);
 
-            expect(scene.tilesheet).toBe(sheet);
+            expect(scene.getTilesheet()).toBe(sheet);
         });
 
         it('should play animations', () => {

@@ -10,7 +10,7 @@ type TileNumber = number|null;
 class Scene {
     protected initialTiles: Array<Array<TileNumber>>;
     protected tiles: Array<Array<TileNumber>>;
-    protected tilesheet: Tilesheet;
+    protected tilesheet: Tilesheet|null = null;
     protected canvas: HTMLCanvasElement;
     protected timer: Timer;
     protected animationClocks: Array<Counter> = [];
@@ -107,6 +107,10 @@ class Scene {
         return this;
     }
 
+    getTiles(): Array<Array<number>> {
+        return this.tiles;
+    }
+
     updateTilesFromArray(tiles: Array<TileNumber>, currentTileIndex: number, deltaX: number = 0, deltaY: number = 0): number {
         let nextTileIndex = currentTileIndex + 1;
 
@@ -160,6 +164,10 @@ class Scene {
         this.playAnimations();
 
         return this;
+    }
+
+    getTilesheet(): Tilesheet|null {
+        return this.tilesheet;
     }
 }
 
