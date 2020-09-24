@@ -45,18 +45,32 @@ describe('Scene', () => {
     });
 
     describe('getWidth', () => {
-        it('should scene width in pixels', () => {
+        it('should return scene width in pixels', () => {
             const width = scene.getWidth();
 
             expect(width).toBe(80);
         });
+
+        it('should return 0 if no tilesheet', () => {
+            scene.tilesheet = null;
+            const width = scene.getWidth();
+
+            expect(width).toBe(0);
+        });
      });
 
      describe('getHeight', () => {
-        it('should scene height in pixels', () => {
+        it('should return scene height in pixels', () => {
             const height = scene.getHeight();
 
             expect(height).toBe(40);
+        });
+
+        it('should return 0 if no tilesheet', () => {
+            scene.tilesheet = null;
+            const height = scene.getHeight();
+
+            expect(height).toBe(0);
         });
      });
 
@@ -154,6 +168,23 @@ describe('Scene', () => {
             scene.renderTile(2, 2, scene.canvas);
 
             expect(ctx.clearRect).toHaveBeenCalledWith(32, 32, 16, 16);
+        });
+
+        it('should do nothing if no canvas', () => {
+            scene.canvas = null;
+
+            scene.renderTile(2, 1);
+
+            expect(ctx.clearRect).not.toHaveBeenCalled();
+            expect(ctx.drawImage).not.toHaveBeenCalled();
+        });
+
+        it('should do nothing if no tilesheet', () => {
+            scene.tilesheet = null;
+            scene.renderTile(2, 1, scene.canvas);
+
+            expect(ctx.clearRect).not.toHaveBeenCalled();
+            expect(ctx.drawImage).not.toHaveBeenCalled();
         });
     });
 
@@ -289,6 +320,12 @@ describe('Scene', () => {
             jest.advanceTimersByTime(300);
 
             expect(scene.updateTilesFromArray).toHaveBeenCalledTimes(2);
+        });
+
+        it('should just stop animations if not tilesheet', () => {
+            scene.tilesheet = null;
+            scene.playAnimations();
+            expect(scene.animationClocks).toHaveLength(0);
         });
     });
 

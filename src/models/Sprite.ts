@@ -3,14 +3,14 @@ import Palette from './Palette';
 import Tilesheet from './Tilesheet';
 
 export default class Sprite {
-    protected palette: Palette|null = null;
+    protected palette?: Palette;
     protected tilesheet: Tilesheet|null = null;
-    protected canvas: HTMLCanvasElement;
+    protected canvas: HTMLCanvasElement|null;
     protected currentTileIndex: number = 0;
     protected timer: Timer;
-    protected animationClock: Counter;
+    protected animationClock: Counter|null = null;
 
-    constructor(canvas: HTMLCanvasElement = null, timer: Timer = window) {
+    constructor(canvas: HTMLCanvasElement|null = null, timer: Timer = window) {
         this.canvas = canvas;
         this.timer = timer;
     }
@@ -35,7 +35,10 @@ export default class Sprite {
     }
 
     stopAnimation(): this {
-        this.timer.clearInterval(this.animationClock);
+        if (this.animationClock) {
+            this.timer.clearInterval(this.animationClock);
+        }
+        
         return this;
     }
 
@@ -119,9 +122,13 @@ export default class Sprite {
         return this;
     }
 
-    render(canvas: HTMLCanvasElement = this.canvas, destX: number = 0, destY: number = 0): this {
+    render(canvas: HTMLCanvasElement|null = this.canvas, destX: number = 0, destY: number = 0): this {
         if (!this.tilesheet) {
             throw new Error(`Sprite::render: this sprite does not have any tilesheet`);
+        }
+
+        if (!canvas) {
+            throw new Error(`Sprite::render: this sprite does not have any canvas`);
         }
 
         const { x, y, width, height } = this.tilesheet.getTileRect(this.currentTileIndex);
@@ -131,7 +138,7 @@ export default class Sprite {
             canvas.height = height;
         }
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         ctx.drawImage(
             this.tilesheet.getImage(this.palette),

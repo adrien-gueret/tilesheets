@@ -104,6 +104,11 @@ describe('Sprite', () => {
             expect(() => sprite.render()).toThrow();
         });
 
+        it('should throw if sprite does not have canvas', () => {
+            sprite.canvas = null;
+            expect(() => sprite.render()).toThrow();
+        });
+
         it('should render sprite tile on sprite canvas', () => {
             sprite.canvas = {
                 getContext: jest.fn(() => ctx),

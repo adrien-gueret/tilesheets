@@ -3,6 +3,14 @@ import Rectangle from '../interfaces/Rectangle';
 
 import Palette from './Palette';
 
+type TileCSSDeclaration = {
+    display: 'inline-block';
+    width: string;
+    height: string;
+    backgroundImage: string;
+    backgroundPosition: string;
+};
+
 class Tilesheet {
     protected image: HTMLImageElement;
     protected imagePath: string;
@@ -10,8 +18,8 @@ class Tilesheet {
     protected tileHeight: number = 16;
     protected margin: number = 1;
     protected animations: Array<Animation> = [];
-    protected referencePalette: Palette = null;
-    protected palettedImages: Map<Palette, HTMLCanvasElement> = new Map();
+    protected referencePalette: Palette|null = null;
+    protected palettedImages: Map<Palette, HTMLImageElement|HTMLCanvasElement> = new Map();
 
     constructor(imagePath: string, shouldAutoload: boolean = true) {
         this.image = new Image();
@@ -105,7 +113,7 @@ class Tilesheet {
             return this.generatePalettedImage(paletteToUse);
         }
     
-        return this.palettedImages.get(paletteToUse);
+        return this.palettedImages.get(paletteToUse) as HTMLImageElement|HTMLCanvasElement;
     }
 
     getTileRect(tileIndex: number): Rectangle {
@@ -126,7 +134,7 @@ class Tilesheet {
         };
     }
 
-    getTileStyle(tileIndex: number): Partial<CSSStyleDeclaration> {
+    getTileStyle(tileIndex: number): TileCSSDeclaration {
         if (!this.image.complete) {
             throw new Error('Tilesheets::getTileStyle: image is not fully loaded yet.');
         }
@@ -151,7 +159,7 @@ class Tilesheet {
         const tileStyle = this.getTileStyle(tileIndex);
 
         Object.keys(tileStyle).forEach((styleProp) => {
-            domElement.style[styleProp] = tileStyle[styleProp];
+            domElement.style[styleProp as keyof TileCSSDeclaration] = tileStyle[styleProp as keyof TileCSSDeclaration];
         });
 
         return domElement;
@@ -163,7 +171,7 @@ class Tilesheet {
         imageData: ImageData,
     } {
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         const { width, height } = this.image;
 
@@ -185,7 +193,8 @@ class Tilesheet {
             return this.referencePalette;
         }
 
-        this.setReferencePalette(new Palette());
+        const referencePalette = new Palette();
+        this.setReferencePalette(referencePalette);
 
         const { imageData } = this.initNewCanvasWithImage();
         const pixelData = imageData.data;
@@ -196,10 +205,10 @@ class Tilesheet {
             const blue = pixelData[i + 2];
             const alpha = pixelData[i + 3];
 
-            this.referencePalette.addColor([red, green, blue, alpha]);
+            referencePalette.addColor([red, green, blue, alpha]);
         }
 
-        return this.referencePalette;
+        return referencePalette;
     }
 
     setReferencePalette(palette: Palette): this {

@@ -1,21 +1,21 @@
 import Timer, { Counter } from '../interfaces/Timer';
 import Tilesheet from './Tilesheet';
 
-function cloneDeepArrays(arraysToClone) {
+function cloneDeepArrays<T>(arraysToClone: Array<T[]>): Array<T[]> {
     return arraysToClone.map(arr => arr.slice());
 }
 
-type TileNumber = number|null;
+type TileNumber = number;
 
 class Scene {
     protected initialTiles: Array<Array<TileNumber>>;
     protected tiles: Array<Array<TileNumber>>;
     protected tilesheet: Tilesheet|null = null;
-    protected canvas: HTMLCanvasElement;
+    protected canvas: HTMLCanvasElement|null;
     protected timer: Timer;
     protected animationClocks: Array<Counter> = [];
 
-    constructor(tiles: Array<Array<TileNumber>> = [], canvas: HTMLCanvasElement = null, timer: Timer = window) {
+    constructor(tiles: Array<Array<TileNumber>> = [], canvas: HTMLCanvasElement|null = null, timer: Timer = window) {
         this.initialTiles = cloneDeepArrays(tiles);
         this.tiles = cloneDeepArrays(tiles);
         this.canvas = canvas;
@@ -23,17 +23,25 @@ class Scene {
     }
 
     getWidth(): number {
+        if (!this.tilesheet) {
+            return 0;
+        }
+
         const { width } = this.tilesheet.getTileSize();
         const maxLength = Math.max(...this.tiles.map(row => row.length));
         return width * maxLength;
     }
 
     getHeight(): number {
+        if (!this.tilesheet) {
+            return 0;
+        }
+
         const { height } = this.tilesheet.getTileSize();
         return this.tiles.length * height;
     }
 
-    getCanvas(): HTMLCanvasElement {
+    getCanvas(): HTMLCanvasElement|null {
         return this.canvas;
     }
 
@@ -60,12 +68,16 @@ class Scene {
     renderTile(
         columnIndex: number,
         rowIndex: number,
-        canvas: HTMLCanvasElement = this.canvas,
+        canvas: HTMLCanvasElement|null = this.canvas,
         deltaX: number = 0,
         deltaY: number = 0
     ): this {
-        const ctx = canvas.getContext('2d');
-        const tileIndex = this.tiles[rowIndex][columnIndex];
+        if (!canvas || !this.tilesheet) {
+            return this;
+        }
+
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const tileIndex = this.tiles[rowIndex][columnIndex] as number;
 
         const { x, y, width, height } = this.tilesheet.getTileRect(tileIndex);
 
@@ -82,7 +94,7 @@ class Scene {
         return this;
     }
 
-    render(canvas: HTMLCanvasElement = this.canvas, x: number = 0, y: number = 0): this {
+    render(canvas: HTMLCanvasElement|null = this.canvas, x: number = 0, y: number = 0): this {
         if (!this.tilesheet) {
             throw new Error('Scene::render: tilesheet is not defined.');
         }
@@ -138,6 +150,10 @@ class Scene {
 
     playAnimations(x: number = 0, y: number = 0): this {
         this.stopAnimations();
+
+        if (!this.tilesheet) {
+            return this;
+        }
         
         this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
             let tileIndex = 0;
@@ -154,6 +170,7 @@ class Scene {
         this.animationClocks.forEach((clock) => {
             this.timer.clearInterval(clock);
         });
+        this.animationClocks = [];
         return this;
     }
 

@@ -1,4 +1,4 @@
-export type Counter = string|number;
+export type Counter = string|number|undefined;
 
 export default interface Timer {
     setInterval(callback: Function, delay: number): Counter;
