@@ -108,6 +108,10 @@ export default class Sprite {
             this.render();
         }
 
+        if (animation.tiles.length === 1 || !animation.speed) {
+            return this;
+        }
+
         this.animationClock = this.timer.setInterval(() => {
             currentAnimationIndex = this.updateTilesFromArray(
                 animation.tiles,

@@ -158,6 +158,10 @@ class Scene {
         this.animationClocks = this.tilesheet.getAnimations().map((animation) => {
             let tileIndex = 0;
 
+            if (!animation.speed) {
+                return;
+            }
+
             return this.timer.setInterval(() => {
                 tileIndex = this.updateTilesFromArray(animation.tiles, tileIndex, x, y);
             }, animation.speed);

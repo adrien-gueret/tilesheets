@@ -301,6 +301,9 @@ describe('Scene', () => {
             }, {
                 tiles: [1, 2],
                 speed: 300,
+            }, {
+                tiles: [3],
+                name: 'false_animation',
             }]);
         });
 
@@ -312,10 +315,10 @@ describe('Scene', () => {
             expect(scene.stopAnimations).toHaveBeenCalled();
         });
 
-        it('should set new animations', () => {
+        it('should set new animations and run ones with speed', () => {
             scene.updateTilesFromArray = jest.fn();
             scene.playAnimations();
-            expect(scene.animationClocks).toHaveLength(2);
+            expect(scene.animationClocks).toHaveLength(3);
 
             jest.advanceTimersByTime(300);
 

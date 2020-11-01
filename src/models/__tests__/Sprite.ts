@@ -213,6 +213,20 @@ describe('Sprite', () => {
                 .toHaveBeenCalledWith([4, 5, 6], 0, shouldLoop, onUpdate, onEnd, shouldRender);
         });
 
+        it('should NOT play given animation if it does not have speed', () => {
+            sheet.getAnimation.mockReturnValue({
+                tiles: [4, 5, 6],
+            });
+
+            sprite.playAnimation('foo');
+
+            expect(sprite.animationClock).toBeDefined();
+
+            jest.advanceTimersByTime(300);
+
+            expect(sprite.updateTilesFromArray).not.toHaveBeenCalled();
+        });
+
         it('should fire given onUpdate function', () => {
             const onUpdate = jest.fn();
 
