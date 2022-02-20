@@ -31,4 +31,14 @@ mySheet.waitForLoading().then(() => {
 });
 ```
 
+You can also use it directly in your browser: by including the lib file via a `script` tag,
+you can access a global variable `TilesheetsJS`:
+
+```html
+<script src="https://unpkg.com/tilesheets/tilesheets.min.js"></script>
+<script>
+    const { Sprite, Tilesheet } = TilesheetsJS;
+</script>
+```
+
 __Know more on on <a href="https://adrien-gueret.github.io/tilesheets/">the demo page</a>!__
