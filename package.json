@@ -1,12 +1,13 @@
 {
   "name": "tilesheets",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A small library providing helpers to handle tile sheets.",
   "main": "index.js",
   "scripts": {
     "dev": "parcel serve ./examples/index.html --out-dir docs",
     "build": "parcel build ./examples/index.html --no-cache --public-url https://adrien-gueret.github.io/tilesheets/ --out-dir docs",
-    "npm": "tsc",
+    "build:lib": "parcel build ./index.ts --no-cache --public-url ./ --out-dir ./ --out-file tilesheets.min.js --global TilesheetsJS",
+    "npm": "tsc && build:lib",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll"
   },

@@ -4,5 +4,8 @@ node_modules
 yarn.error
 yarn-error.log
 .cache
+.history
 src/**/*.js
 index.js
+tilesheets.min.js
+tilesheets.min.js.map

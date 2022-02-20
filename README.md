@@ -1,4 +1,4 @@
-# Tilesheet.js
+# Tilesheets.js
 ## A small library providing helpers to handle tile sheets.
 
 *Tilesheets.js* helps you handling tile sheets with JavaScript.  
