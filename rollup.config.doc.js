@@ -1,5 +1,6 @@
 import image from "@rollup/plugin-image";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
 
 export default {
   input: "./examples/index.js",
@@ -15,5 +16,6 @@ export default {
       extensions: /\.(png)$/,
       limit: 10000,
     }),
+    terser(),
   ],
 };

@@ -1,6 +1,5 @@
 .cache
 .gitignore
-.posthtmlrc
 .vscode
 coverage
 docs
