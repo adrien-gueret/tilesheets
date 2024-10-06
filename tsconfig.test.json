@@ -1,7 +1,10 @@
 {
-    "extends": "./tsconfig",
-    "compilerOptions": {
-        "target": "es6",
-        "removeComments": false
-    }
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "target": "es6",
+    "removeComments": false
+  },
+  "ts-jest": {
+    "diagnostics": false
+  }
 }
