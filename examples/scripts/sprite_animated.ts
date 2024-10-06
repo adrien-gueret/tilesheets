@@ -1,46 +1,55 @@
-import { Sprite } from '../../';
+import { Sprite } from "../../";
+import type { Tilesheet } from "../../";
 
-export default (sheetSpring) => {
-    const flowers = new Sprite(document.getElementById('canvas_sprite_animated') as HTMLCanvasElement);
-    
-    flowers
-        .useTilesheet(sheetSpring)
-        .playAnimation('flower')
-        .render();
+export default (sheetSpring: Tilesheet) => {
+  const flowers = new Sprite(
+    document.getElementById("canvas_sprite_animated") as HTMLCanvasElement
+  );
 
-    const advancedSprite = new Sprite(document.getElementById('canvas_sprite_animated_advanced') as HTMLCanvasElement);
-    advancedSprite.useTilesheet(sheetSpring);
+  flowers.useTilesheet(sheetSpring).playAnimation("flower").render();
 
-    let activeButton: HTMLButtonElement;
+  const advancedSprite = new Sprite(
+    document.getElementById(
+      "canvas_sprite_animated_advanced"
+    ) as HTMLCanvasElement
+  );
+  advancedSprite.useTilesheet(sheetSpring);
 
-    function switchAnimation(newAnimation) {
-        const possibleAnimations = ['water', 'flower'];
+  let activeButton: HTMLButtonElement | null;
 
-        activeButton = document.querySelector(`[data-animation="${newAnimation}"]`);
-        activeButton.disabled = true;
-        activeButton.classList.add('is-outlined');
-    
-        if (possibleAnimations.indexOf(newAnimation) >= 0) {
-            advancedSprite.playAnimation(newAnimation).render();
-        } else {
-            advancedSprite.stopAnimation();
-        }
+  function switchAnimation(newAnimation: string) {
+    const possibleAnimations = ["water", "flower"];
+
+    activeButton = document.querySelector(`[data-animation="${newAnimation}"]`);
+
+    if (!activeButton) {
+      return;
     }
 
-    document.body.addEventListener('click', (e) => {
-        const target = e.target as HTMLButtonElement;
+    activeButton.disabled = true;
+    activeButton.classList.add("is-outlined");
 
-        if (!target.dataset.animation) {
-            return;
-        }
+    if (possibleAnimations.indexOf(newAnimation) >= 0) {
+      advancedSprite.playAnimation(newAnimation).render();
+    } else {
+      advancedSprite.stopAnimation();
+    }
+  }
 
-        activeButton.disabled = false;
-        activeButton.classList.remove('is-outlined');
+  document.body.addEventListener("click", (e) => {
+    const target = e.target as HTMLButtonElement;
 
-        switchAnimation(target.dataset.animation);
-       
-        e.preventDefault();
-    });
+    if (!target.dataset.animation || !activeButton) {
+      return;
+    }
 
-    switchAnimation('flower');
+    activeButton.disabled = false;
+    activeButton.classList.remove("is-outlined");
+
+    switchAnimation(target.dataset.animation);
+
+    e.preventDefault();
+  });
+
+  switchAnimation("flower");
 };

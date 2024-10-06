@@ -1,40 +1,57 @@
-import { Sprite } from '../../';
+import { Sprite } from "../../";
+import type { Tilesheet, Palette } from "../../";
 
-export default async (sheetYoshi, palettes) => {
-    const spriteYoshiAnimated = new Sprite(document.getElementById('canvas_sprite_yoshi_animated') as HTMLCanvasElement);
-    spriteYoshiAnimated.useTilesheet(sheetYoshi).playAnimation('hourray'); 
-    
-    const spriteYellowYoshiAnimated = new Sprite(document.getElementById('canvas_sprite_yellow_yoshi_animated') as HTMLCanvasElement);
-    spriteYellowYoshiAnimated.useTilesheet(sheetYoshi).usePalette(palettes[1]).playAnimation('hourray'); 
+export default async (sheetYoshi: Tilesheet, palettes: Palette[]) => {
+  const spriteYoshiAnimated = new Sprite(
+    document.getElementById("canvas_sprite_yoshi_animated") as HTMLCanvasElement
+  );
+  spriteYoshiAnimated.useTilesheet(sheetYoshi).playAnimation("hourray");
 
-    const palettedSprite = new Sprite(document.getElementById('canvas_paletted_sprite') as HTMLCanvasElement);
-    
-    let activeButton: HTMLButtonElement;
+  const spriteYellowYoshiAnimated = new Sprite(
+    document.getElementById(
+      "canvas_sprite_yellow_yoshi_animated"
+    ) as HTMLCanvasElement
+  );
+  spriteYellowYoshiAnimated
+    .useTilesheet(sheetYoshi)
+    .usePalette(palettes[1])
+    .playAnimation("hourray");
 
-    function switchPalette(newPalette) {
-        activeButton = document.querySelector(`[data-palette="${newPalette}"]`);
-        activeButton.disabled = true;
-        activeButton.classList.add('is-outlined');
-    
-        palettedSprite.usePalette(palettes[newPalette]).render();
+  const palettedSprite = new Sprite(
+    document.getElementById("canvas_paletted_sprite") as HTMLCanvasElement
+  );
+
+  let activeButton: HTMLButtonElement | null;
+
+  function switchPalette(paletteIndex: number) {
+    activeButton = document.querySelector(`[data-palette="${paletteIndex}"]`);
+
+    if (!activeButton) {
+      return;
     }
 
-    document.body.addEventListener('click', (e) => {
-        const target = e.target as HTMLButtonElement;
+    activeButton.disabled = true;
+    activeButton.classList.add("is-outlined");
 
-        if (!target.dataset.palette) {
-            return;
-        }
+    palettedSprite.usePalette(palettes[paletteIndex]).render();
+  }
 
-        activeButton.disabled = false;
-        activeButton.classList.remove('is-outlined');
+  document.body.addEventListener("click", (e) => {
+    const target = e.target as HTMLButtonElement;
 
-        switchPalette(target.dataset.palette);
-       
-        e.preventDefault();
-    });
+    if (!target.dataset.palette || !activeButton) {
+      return;
+    }
 
-    palettedSprite.useTilesheet(sheetYoshi).playAnimation('hourray'); 
-    
-    switchPalette(1);
+    activeButton.disabled = false;
+    activeButton.classList.remove("is-outlined");
+
+    switchPalette(Number(target.dataset.palette));
+
+    e.preventDefault();
+  });
+
+  palettedSprite.useTilesheet(sheetYoshi).playAnimation("hourray");
+
+  switchPalette(1);
 };
