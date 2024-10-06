@@ -5,7 +5,8 @@ yarn.error
 yarn-error.log
 .cache
 .history
+examples/**/*.js
 src/**/*.js
-index.js
+/index.js
 tilesheets.min.js
 tilesheets.min.js.map

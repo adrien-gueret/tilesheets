@@ -3,9 +3,9 @@
   "version": "1.6.0",
   "description": "A small library providing helpers to handle tile sheets.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "parcel serve ./examples/index.html --out-dir docs",
-    "build": "parcel build ./examples/index.html --no-cache --public-url https://adrien-gueret.github.io/tilesheets/ --out-dir docs",
+    "build": "rm -rf docs & npx tsc & rollup --config rollup.config.js &  cp -r examples/images docs & cp examples/index.html docs",
     "build:lib": "parcel build ./index.ts --no-cache --public-url ./ --out-dir ./ --out-file tilesheets.min.js --global TilesheetsJS",
     "npm": "tsc && build:lib",
     "test": "jest --coverage",
@@ -27,11 +27,14 @@
   },
   "homepage": "https://github.com/adrien-gueret/tilesheets#readme",
   "devDependencies": {
+    "@rollup/plugin-image": "^3.0.3",
+    "@rollup/plugin-node-resolve": "^15.3.0",
     "@types/jest": "^26.0.3",
     "jest": "^26.1.0",
-    "parcel-bundler": "^1.10.3",
+    "rollup": "^4.24.0",
     "ts-jest": "^26.1.1",
-    "typescript": "^3.1.6"
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2"
   },
   "jest": {
     "rootDir": "src",

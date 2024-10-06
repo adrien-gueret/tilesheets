@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
-        "allowJs": false,
-        "strict": true,  
-        "downlevelIteration": true,
-        "target": "es5",
-        "lib": ["es6", "dom"],
-        "removeComments": true
-    },
-    "include": ["index.ts", "src"],
-    "exclude": ["node_modules", "**/__tests__/*", "**/__mocks__/*"]
+  "compilerOptions": {
+    "allowJs": false,
+    "strict": true,
+    "downlevelIteration": true,
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "removeComments": true,
+    "module": "Preserve"
+  },
+  "files": ["./examples/index.ts"],
+  "include": ["./examples/declaration.d.ts"]
 }
